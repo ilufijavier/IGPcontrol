@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IGP Control v2.1</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:#1a2a3a;min-height:100vh}
+:root{
+  --blue:#1b4f8a;--bl:#e6eef8;--bm:#3d7cc9;--navy:#0d2d52;
+  --teal:#0a7a62;--tl:#e0f3ee;--green:#258a4e;--gl:#e2f5eb;
+  --orange:#d4720a;--ol:#fdf0e0;--red:#b52b27;--rl:#fdecea;
+  --purple:#6d2fc9;--pl:#f1eaff;--gold:#c9960a;--goll:#fdf8e0;
+  --gray:#5c6b7d;--grl:#f4f6f9;--white:#fff;--border:#cdd8e8;
+  --shadow:0 2px 14px rgba(13,45,82,0.10)
+}
+.app{display:flex;flex-direction:column;min-height:100vh}
+.header{background:linear-gradient(135deg,var(--navy) 0%,var(--blue) 100%);color:white;padding:0 0.9rem;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:100;box-shadow:0 3px 12px rgba(0,0,0,0.25)}
+.hdr-brand{display:flex;align-items:center;gap:8px}
+.hdr-logo{width:33px;height:33px;flex-shrink:0}
+.hdr-title{display:flex;flex-direction:column;line-height:1.1}
+.hdr-title strong{font-size:0.93rem;font-weight:900}
+.hdr-title span{font-size:0.58rem;opacity:0.75;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hdr-r{display:flex;align-items:center;gap:5px;flex-shrink:0}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#9ca3af;flex-shrink:0;transition:background 0.3s}
+.sync-dot.ok{background:#4ade80}.sync-dot.busy{background:#facc15;animation:pulse 1s infinite}.sync-dot.err{background:#f87171}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.35}}
+.gbadge{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:3px 9px;font-size:0.68rem;display:flex;align-items:center;gap:4px;cursor:pointer;font-weight:700;max-width:115px}
+.gbadge span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hbtn{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.28);border-radius:7px;padding:4px 8px;color:white;font-family:'Nunito';font-size:0.68rem;font-weight:700;cursor:pointer;white-space:nowrap}
+.nav{background:var(--white);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.nb{flex:1;min-width:50px;padding:8px 2px 6px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:'Nunito';font-size:0.59rem;font-weight:700;color:var(--gray);border-bottom:3px solid transparent;white-space:nowrap}
+.nb.active{color:var(--blue);border-bottom-color:var(--blue)}
+.nb svg{width:19px;height:19px}
+.content{flex:1;padding:0.85rem;max-width:540px;margin:0 auto;width:100%}
+.card{background:var(--white);border-radius:14px;padding:0.95rem;margin-bottom:0.85rem;box-shadow:var(--shadow);border:1px solid var(--border)}
+.ct{font-size:0.88rem;font-weight:800;color:var(--blue);margin-bottom:0.8rem;display:flex;align-items:center;gap:6px}
+.fg{margin-bottom:0.72rem}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:0.55rem;margin-bottom:0.72rem}
+label{display:block;font-size:0.67rem;font-weight:700;color:var(--gray);margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px}
+input,select,textarea{width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:'Nunito';font-size:0.84rem;color:#1a2a3a;background:var(--grl);transition:border 0.2s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--bm);background:white}
+input[readonly]{background:#edf2f7;color:var(--gray);cursor:default}
+input.rut-ok{border-color:var(--green)!important;background:#f0fbf4!important}
+input.rut-err{border-color:var(--red)!important;background:#fff5f5!important}
+textarea{resize:vertical;min-height:62px}
+.rut-hint{font-size:0.65rem;margin-top:2px;font-weight:700}
+.rut-hint.ok{color:var(--green)}.rut-hint.err{color:var(--red)}
+.btn{padding:8px 14px;border-radius:9px;border:none;font-family:'Nunito';font-weight:700;font-size:0.83rem;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all 0.18s}
+.btn-p{background:linear-gradient(135deg,var(--navy),var(--blue));color:white;width:100%;justify-content:center;font-size:0.9rem;padding:11px;border-radius:10px}
+.btn-p:hover{filter:brightness(1.1)}
+.btn-ok{background:var(--green);color:white;padding:6px 11px;border-radius:8px;font-size:0.76rem}
+.btn-err{background:var(--red);color:white;padding:5px 9px;border-radius:7px;font-size:0.74rem}
+.btn-sec{background:var(--bl);color:var(--blue);padding:6px 11px;border-radius:8px;font-size:0.76rem}
+.btn-out{background:transparent;border:1.5px solid var(--border);color:var(--gray);padding:6px 11px;border-radius:8px;font-size:0.76rem}
+.btn-pur{background:var(--purple);color:white;padding:6px 11px;border-radius:8px;font-size:0.76rem}
+.btn-ora{background:var(--orange);color:white;padding:6px 11px;border-radius:8px;font-size:0.76rem}
+.btn-teal{background:var(--teal);color:white;padding:6px 11px;border-radius:8px;font-size:0.76rem}
+.btn-red{background:var(--red);color:white;padding:6px 11px;border-radius:8px;font-size:0.76rem}
+.btn-navy{background:var(--navy);color:white;padding:6px 11px;border-radius:8px;font-size:0.76rem}
+.btn-gold{background:var(--gold);color:white;padding:6px 11px;border-radius:8px;font-size:0.76rem}
+.btn-sm{padding:4px 8px!important;font-size:0.7rem!important;border-radius:7px!important}
+.btn-row{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.45rem}
+.badge{display:inline-block;padding:2px 7px;border-radius:20px;font-size:0.65rem;font-weight:700}
+.bg{background:var(--gl);color:var(--green)}.bb{background:var(--bl);color:var(--blue)}
+.bo{background:var(--ol);color:var(--orange)}.br{background:var(--rl);color:var(--red)}
+.bp{background:var(--pl);color:var(--purple)}.bt{background:var(--tl);color:var(--teal)}
+.bgold{background:var(--goll);color:var(--gold)}
+.tr2{display:flex;align-items:center;justify-content:space-between;padding:6px 0}
+.tl2{font-size:0.82rem;font-weight:600}
+.tog{width:40px;height:23px;background:var(--border);border-radius:12px;position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0}
+.tog.on{background:var(--teal)}.tog::after{content:'';width:17px;height:17px;background:white;border-radius:50%;position:absolute;top:3px;left:3px;transition:left 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.2)}.tog.on::after{left:20px}
+.li{display:flex;align-items:flex-start;padding:8px 0;border-bottom:1px solid #eef2f7;gap:8px}
+.li:last-child{border-bottom:none}
+.av{width:34px;height:34px;border-radius:50%;background:var(--bl);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.72rem;color:var(--blue);flex-shrink:0;margin-top:1px}
+.li-i{flex:1;min-width:0}
+.li-n{font-weight:700;font-size:0.82rem}
+.li-s{font-size:0.69rem;color:var(--gray);margin-top:1px}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;margin-bottom:0.85rem}
+.sc{background:var(--white);border-radius:12px;padding:0.8rem;border:1px solid var(--border);box-shadow:var(--shadow)}
+.si{width:31px;height:31px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:5px}
+.sn{font-size:1.4rem;font-weight:800}
+.sl{font-size:0.64rem;color:var(--gray);font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+.section{display:none}.section.active{display:block}
+.alert{padding:8px 11px;border-radius:8px;font-size:0.79rem;font-weight:600;margin-bottom:0.65rem}
+.a-ok{background:var(--gl);color:var(--green)}.a-err{background:var(--rl);color:var(--red)}
+.a-inf{background:var(--bl);color:var(--blue)}.a-war{background:var(--ol);color:var(--orange)}
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:600;display:none;align-items:flex-end;justify-content:center}
+.mbg.open{display:flex}
+.modal{background:white;border-radius:18px 18px 0 0;padding:1.15rem;width:100%;max-width:540px;max-height:92vh;overflow-y:auto}
+.mt2{font-size:0.92rem;font-weight:800;color:var(--blue);margin-bottom:0.8rem;display:flex;justify-content:space-between;align-items:center}
+.mc{background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--gray);line-height:1}
+.overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:999;padding:1.2rem;overflow-y:auto}
+.ov-bg{background:linear-gradient(145deg,#0d2d52 0%,#1b4f8a 50%,#0a7a62 100%)}
+.ov-logo{text-align:center;color:white;margin-bottom:1rem;display:flex;flex-direction:column;align-items:center;gap:7px}
+.ov-card{background:white;border-radius:18px;padding:1.15rem;width:100%;max-width:420px;box-shadow:0 10px 50px rgba(0,0,0,0.25)}
+.ov-card h2{font-size:0.97rem;font-weight:800;color:var(--blue);margin-bottom:0.85rem}
+hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
+.hidden{display:none!important}
+.tsm{font-size:0.74rem;color:var(--gray)}
+.tc{text-align:center}.mt1{margin-top:0.45rem}
+.link{color:var(--blue);cursor:pointer;font-size:0.78rem;font-weight:700}
+.obs-tag{background:var(--grl);border-radius:6px;padding:3px 7px;font-size:0.7rem;color:var(--gray);margin-top:3px;display:block}
+.obs-box{background:#f8fafc;border-radius:8px;padding:7px 9px;margin-top:5px;border-left:3px solid var(--blue)}
+.obs-item{padding:3px 0;font-size:0.73rem;border-bottom:1px solid #eef2f7}.obs-item:last-child{border-bottom:none}
+.vauth-ok{background:var(--tl);border-radius:9px;padding:8px 11px;border:1px solid #9FE1CB;font-size:0.8rem}
+.vauth-no{background:var(--rl);border-radius:9px;padding:8px 11px;border:1px solid #F7C1C1;font-size:0.8rem}
+.remp-banner{background:linear-gradient(90deg,var(--orange),#e8950a);color:white;border-radius:8px;padding:7px 10px;margin-bottom:0.7rem;font-size:0.76rem;font-weight:700}
+.info-box{background:var(--bl);border-radius:8px;padding:8px 10px;font-size:0.77rem;color:var(--blue);margin-bottom:0.65rem}
+.pin-box{background:linear-gradient(135deg,var(--navy),var(--blue));color:white;border-radius:12px;padding:14px;text-align:center;margin:0.8rem 0}
+.pin-num{font-size:2.2rem;font-weight:900;letter-spacing:8px;margin:6px 0}
+.search-res{background:var(--grl);border-radius:9px;max-height:160px;overflow-y:auto;margin-top:0.35rem;border:1px solid var(--border)}
+.search-item{padding:6px 9px;font-size:0.8rem;cursor:pointer;border-bottom:1px solid var(--border)}.search-item:hover{background:var(--bl)}.search-item:last-child{border-bottom:none}
+.role-badge{font-size:0.63rem;padding:2px 6px;border-radius:10px;font-weight:700;margin-left:4px}
+.role-admin{background:var(--navy);color:white}.role-supervisor{background:var(--pl);color:var(--purple)}
+.role-comite{background:var(--goll);color:var(--gold)}.role-guardia{background:var(--bl);color:var(--blue)}
+.perm-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;margin:0.5rem 0}
+.perm-item{display:flex;align-items:center;gap:5px;font-size:0.75rem;font-weight:600}
+.perm-item input[type=checkbox]{width:auto;padding:0}
+.sync-panel{background:linear-gradient(135deg,#e8f4ff,#e0f3ee);border-radius:12px;padding:12px 14px;border:1px solid var(--border);margin-bottom:0.7rem}
+.sync-status-row{display:flex;align-items:center;gap:8px;margin-bottom:0.6rem;font-size:0.8rem;font-weight:700}
+.sdot{width:10px;height:10px;border-radius:50%;background:var(--gray);flex-shrink:0}
+.sdot.ok{background:var(--green)}.sdot.busy{background:var(--gold);animation:pulse 1s infinite}.sdot.err{background:var(--red)}
+.sync-log{background:white;border-radius:8px;padding:6px 9px;max-height:80px;overflow-y:auto;font-size:0.67rem;color:var(--gray);border:1px solid var(--border);margin-top:0.4rem;font-family:monospace}
+.vaciado-box{background:var(--rl);border-radius:10px;padding:10px 12px;margin-bottom:0.7rem;font-size:0.8rem;color:var(--red)}
+/* CONDO SELECTOR */
+.condo-grid{display:grid;gap:0.7rem;margin-bottom:1rem}
+.condo-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:0.9rem;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s}
+.condo-card:hover{border-color:var(--blue);box-shadow:0 2px 10px rgba(27,79,138,0.12)}
+.condo-card.selected{border-color:var(--blue);background:var(--bl)}
+.condo-name{font-weight:800;font-size:0.9rem;color:var(--blue)}
+.condo-info{font-size:0.72rem;color:var(--gray);margin-top:2px}
+/* RO = readonly mode for off-duty */
+.readonly-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:400;display:flex;align-items:center;justify-content:center}
+.readonly-msg{background:white;border-radius:14px;padding:1.2rem;max-width:300px;text-align:center}
+.fuera-turno-banner{background:var(--rl);color:var(--red);border-radius:8px;padding:7px 10px;margin-bottom:0.7rem;font-size:0.76rem;font-weight:700;text-align:center}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ACCESS KEY GATE -->
+<div class="overlay ov-bg" id="key-gate">
+  <div class="ov-logo">
+    <svg width="56" height="56" viewBox="0 0 64 64"><path d="M32 8L14 18L14 38C14 50 32 58 32 58C32 58 50 50 50 38L50 18Z" fill="none" stroke="white" stroke-width="3" stroke-linejoin="round"/><path d="M32 14L19 21L19 37C19 46 32 53 32 53C32 53 45 46 45 37L45 21Z" fill="rgba(255,255,255,0.22)"/><path d="M24 32L30 38L42 26" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+    <div><div style="font-size:1.5rem;font-weight:900">IGP Control v2.1</div></div>
+  </div>
+  <div class="ov-card">
+    <h2>Clave de Acceso</h2>
+    <div class="fg"><label>Ingresa la clave para continuar</label><input type="password" id="gate-key" onkeydown="if(event.key==='Enter')checkGateKey()"/></div>
+    <div id="gate-err" class="alert a-err hidden">Clave incorrecta</div>
+    <button class="btn btn-p" onclick="checkGateKey()">Continuar →</button>
+  </div>
+</div>
+
+<!-- CONDO SELECTOR -->
+<div class="overlay ov-bg hidden" id="condo-selector">
+  <div class="ov-logo">
+    <svg width="52" height="52" viewBox="0 0 64 64"><path d="M32 8L14 18L14 38C14 50 32 58 32 58C32 58 50 50 50 38L50 18Z" fill="none" stroke="white" stroke-width="3" stroke-linejoin="round"/><path d="M32 14L19 21L19 37C19 46 32 53 32 53C32 53 45 46 45 37L45 21Z" fill="rgba(255,255,255,0.2)"/><path d="M24 32L30 38L42 26" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+    <div><div style="font-size:1.4rem;font-weight:900">IGP Control v2.1</div><div style="font-size:0.62rem;opacity:0.75;letter-spacing:2px;text-transform:uppercase">Selecciona tu condominio</div></div>
+  </div>
+  <div class="ov-card">
+    <h2>¿Cuál es tu condominio?</h2>
+    <div id="condo-list" class="condo-grid"></div>
+    <div class="fg" style="margin-top:0.5rem">
+      <label>RUT del Condominio (para acceder)</label>
+      <input type="text" id="condo-rut-input" oninput="rutField('condo-rut-input','condo-rut-h')" placeholder="76.123.456-7"/>
+      <div class="rut-hint" id="condo-rut-h"></div>
+    </div>
+    <div id="condo-err" class="alert a-err hidden">RUT incorrecto para este condominio</div>
+    <button class="btn btn-p" onclick="seleccionarCondo()">Entrar →</button>
+    <hr>
+    <button class="btn btn-out" style="width:100%;justify-content:center;margin-top:0.3rem" onclick="mostrarNuevoCondo()">+ Agregar nuevo condominio</button>
+  </div>
+</div>
+
+<!-- SETUP (new condo) -->
+<div class="overlay ov-bg hidden" id="setup-screen">
+  <div class="ov-logo"><div style="font-size:1.4rem;font-weight:900;color:white">Nuevo Condominio</div></div>
+  <div class="ov-card" style="max-height:90vh;overflow-y:auto">
+    <h2>Configurar Condominio</h2>
+    <!-- TABS -->
+    <div style="display:flex;border-radius:8px;overflow:hidden;border:1.5px solid var(--border);margin-bottom:0.9rem">
+      <button id="stab-0" onclick="sTab(0)" style="flex:1;padding:8px 4px;font-size:0.72rem;font-weight:700;border:none;font-family:Nunito;cursor:pointer;background:var(--blue);color:white">Condominio</button>
+      <button id="stab-1" onclick="sTab(1)" style="flex:1;padding:8px 4px;font-size:0.72rem;font-weight:700;border:none;font-family:Nunito;cursor:pointer;background:var(--grl);color:var(--gray)">Admin</button>
+      <button id="stab-2" onclick="sTab(2)" style="flex:1;padding:8px 4px;font-size:0.72rem;font-weight:700;border:none;font-family:Nunito;cursor:pointer;background:var(--grl);color:var(--gray)">Usuarios</button>
+      <button id="stab-3" onclick="sTab(3)" style="flex:1;padding:8px 4px;font-size:0.72rem;font-weight:700;border:none;font-family:Nunito;cursor:pointer;background:var(--grl);color:var(--gray)">Residentes</button>
+      <button id="stab-4" onclick="sTab(4)" style="flex:1;padding:8px 4px;font-size:0.72rem;font-weight:700;border:none;font-family:Nunito;cursor:pointer;background:var(--grl);color:var(--gray)">Registros</button>
+    </div>
+    <!-- TAB 0: Condominio -->
+    <div id="sp-0">
+      <div class="fg"><label>Nombre del Condominio *</label><input type="text" id="s-nom"/></div>
+      <div class="fg"><label>RUT del Condominio *</label><input type="text" id="s-rut" oninput="rutField('s-rut','s-rut-h')"/><div class="rut-hint" id="s-rut-h"></div></div>
+      <div class="fg"><label>Dirección</label><input type="text" id="s-dir"/></div>
+      <div class="fg"><label>URL Google Apps Script</label><input type="url" id="s-sheeturl" placeholder="https://script.google.com/macros/s/.../exec"/></div>
+      <div class="alert a-inf" style="font-size:0.73rem;margin-top:0.3rem">Con la URL configurada, la app descarga automaticamente todos los datos existentes en Google Sheets al crear el condominio.</div>
+    </div>
+    <!-- TAB 1: Administrador -->
+    <div id="sp-1" class="hidden">
+      <div class="fg"><label>Nombre del Administrador *</label><input type="text" id="s-anom"/></div>
+      <div class="fg"><label>RUT *</label><input type="text" id="s-arut" oninput="rutField('s-arut','s-arut-h')"/><div class="rut-hint" id="s-arut-h"></div></div>
+      <div class="fg"><label>Correo</label><input type="email" id="s-email"/></div>
+      <div class="fg"><label>Clave *</label><input type="password" id="s-aclave"/></div>
+    </div>
+    <!-- TAB 2: Usuarios -->
+    <div id="sp-2" class="hidden">
+      <p class="tsm" style="margin-bottom:0.5rem">Agrega guardias, supervisores y miembros del comite.</p>
+      <div id="s-usr-list"></div>
+      <div style="border:1.5px dashed var(--border);border-radius:9px;padding:0.75rem;margin-top:0.4rem">
+        <div class="fg"><label>Nombre</label><input type="text" id="nu-nom"/></div>
+        <div class="fr">
+          <div><label>RUT</label><input type="text" id="nu-rut" oninput="rutField('nu-rut','nu-rut-h')"/><div class="rut-hint" id="nu-rut-h"></div></div>
+          <div><label>Rol</label><select id="nu-rol"><option value="guardia">Guardia</option><option value="supervisor">Supervisor</option><option value="comite">Comite</option></select></div>
+        </div>
+        <div class="fr">
+          <div><label>Telefono</label><input type="tel" id="nu-tel" placeholder="+56912345678"/></div>
+          <div><label>Clave</label><input type="password" id="nu-clave"/></div>
+        </div>
+        <button class="btn btn-sec btn-sm" onclick="addUsrSetup()">+ Agregar</button>
+      </div>
+      <hr>
+      <p class="tsm" style="margin-bottom:0.4rem">O importa desde Excel:</p>
+      <div class="btn-row">
+        <button class="btn btn-ora btn-sm" onclick="$i('imp-usr-s').click()">Importar Excel</button>
+        <button class="btn btn-out btn-sm" onclick="dlPlantillaUsr()">Plantilla</button>
+      </div>
+      <input type="file" id="imp-usr-s" accept=".xlsx,.xls" class="hidden" onchange="importUsrS(event)"/>
+    </div>
+    <!-- TAB 3: Residentes -->
+    <div id="sp-3" class="hidden">
+      <div id="s-res-count" class="alert a-inf hidden" style="margin-bottom:0.5rem"></div>
+      <div style="border:1.5px dashed var(--border);border-radius:9px;padding:0.75rem">
+        <div class="fg"><label>Depto *</label><input type="text" id="nr-dpto" oninput="this.value=this.value.toUpperCase()" placeholder="B-402"/></div>
+        <div class="fg"><label>Nombre *</label><input type="text" id="nr-nom"/></div>
+        <div class="fr">
+          <div><label>Tipo ID</label><select id="nr-tipo"><option value="rut">RUT</option><option value="pasaporte">Pasaporte</option><option value="dni">DNI</option><option value="otro">Otro</option></select></div>
+          <div><label>Numero ID *</label><input type="text" id="nr-id"/></div>
+        </div>
+        <div class="fr">
+          <div><label>Telefono</label><input type="tel" id="nr-tel" placeholder="+56912345678"/></div>
+          <div><label>Correo</label><input type="email" id="nr-email"/></div>
+        </div>
+        <button class="btn btn-sec btn-sm" onclick="addResSetup()">+ Agregar</button>
+      </div>
+      <hr>
+      <div class="btn-row">
+        <button class="btn btn-ora btn-sm" onclick="$i('imp-res-s').click()">Importar Excel</button>
+        <button class="btn btn-out btn-sm" onclick="dlPlantillaRes()">Plantilla</button>
+      </div>
+      <input type="file" id="imp-res-s" accept=".xlsx,.xls" class="hidden" onchange="importResS(event)"/>
+    </div>
+    <!-- TAB 4: Registros iniciales -->
+    <div id="sp-4" class="hidden">
+      <p class="tsm" style="margin-bottom:0.6rem">Importa registros historicos de visitas, encomiendas y bitacora desde Excel.</p>
+      <div class="card" style="margin-bottom:0.6rem">
+        <div class="ct" style="margin-bottom:0.5rem">Visitas</div>
+        <div id="s-vis-count" class="tsm" style="margin-bottom:0.4rem">Sin visitas cargadas</div>
+        <div class="btn-row">
+          <button class="btn btn-ora btn-sm" onclick="$i('imp-vis-s').click()">Importar Excel</button>
+          <button class="btn btn-out btn-sm" onclick="dlPlantillaVis()">Plantilla</button>
+        </div>
+        <input type="file" id="imp-vis-s" accept=".xlsx,.xls" class="hidden" onchange="importVisS(event)"/>
+      </div>
+      <div class="card" style="margin-bottom:0.6rem">
+        <div class="ct" style="margin-bottom:0.5rem">Encomiendas</div>
+        <div id="s-enc-count" class="tsm" style="margin-bottom:0.4rem">Sin encomiendas cargadas</div>
+        <div class="btn-row">
+          <button class="btn btn-ora btn-sm" onclick="$i('imp-enc-s').click()">Importar Excel</button>
+          <button class="btn btn-out btn-sm" onclick="dlPlantillaEnc()">Plantilla</button>
+        </div>
+        <input type="file" id="imp-enc-s" accept=".xlsx,.xls" class="hidden" onchange="importEncS(event)"/>
+      </div>
+      <div class="card">
+        <div class="ct" style="margin-bottom:0.5rem">Bitacora</div>
+        <div id="s-bit-count" class="tsm" style="margin-bottom:0.4rem">Sin reportes cargados</div>
+        <div class="btn-row">
+          <button class="btn btn-ora btn-sm" onclick="$i('imp-bit-s').click()">Importar Excel</button>
+          <button class="btn btn-out btn-sm" onclick="dlPlantillaBit()">Plantilla</button>
+        </div>
+        <input type="file" id="imp-bit-s" accept=".xlsx,.xls" class="hidden" onchange="importBitS(event)"/>
+      </div>
+    </div>
+    <div id="setup-err" class="alert a-err hidden mt1"></div>
+    <div class="btn-row" style="margin-top:0.85rem">
+      <button class="btn btn-p" style="flex:1" onclick="finishSetup()">Crear Condominio</button>
+      <button class="btn btn-out" onclick="volverSelector()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="overlay ov-bg hidden" id="login-screen">
+  <div class="ov-logo">
+    <svg width="50" height="50" viewBox="0 0 64 64"><path d="M32 8L14 18L14 38C14 50 32 58 32 58C32 58 50 50 50 38L50 18Z" fill="none" stroke="white" stroke-width="3" stroke-linejoin="round"/><path d="M32 14L19 21L19 37C19 46 32 53 32 53C32 53 45 46 45 37L45 21Z" fill="rgba(255,255,255,0.2)"/><path d="M24 32L30 38L42 26" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+    <div><div style="font-size:1.35rem;font-weight:900">IGP Control v2.1</div><div id="login-condo-name" style="font-size:0.7rem;opacity:0.8;margin-top:2px"></div></div>
+  </div>
+  <div class="ov-card">
+    <h2>Iniciar Sesión</h2>
+    <div class="fg"><label>RUT</label><input type="text" id="l-rut" oninput="rutField('l-rut','l-rut-h')"/><div class="rut-hint" id="l-rut-h"></div></div>
+    <div class="fg"><label>Clave</label><input type="password" id="l-clave" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <div id="forzar-cambio" class="hidden">
+      <div class="alert a-war">Debes crear una nueva clave.</div>
+      <div class="fg"><label>Nueva Clave</label><input type="password" id="l-nueva"/></div>
+      <div class="fg"><label>Confirmar</label><input type="password" id="l-confirmar"/></div>
+    </div>
+    <div id="login-err" class="alert a-err hidden">RUT o clave incorrectos</div>
+    <button class="btn btn-p" id="login-btn" onclick="doLogin()">Ingresar</button>
+    <p class="link tc mt1" onclick="openModal('modal-recover')">¿Olvidaste tu clave?</p>
+    <p class="link tc mt1" style="color:var(--gray)" onclick="volverSelector()">← Cambiar condominio</p>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="main-app" class="hidden">
+  <header class="header">
+    <div class="hdr-brand">
+      <svg class="hdr-logo" viewBox="0 0 64 64"><path d="M32 6L12 17L12 39C12 52 32 60 32 60C32 60 52 52 52 39L52 17Z" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" stroke-linejoin="round"/><path d="M32 12L17 21L17 38C17 48 32 55 32 55C32 55 47 48 47 38L47 21Z" fill="rgba(255,255,255,0.18)"/><path d="M23 31L29 37L43 24" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+      <div class="hdr-title"><strong>IGP Control v2.1</strong><span id="hdr-cond">—</span></div>
+    </div>
+    <div class="hdr-r">
+      <div class="sync-dot" id="sync-dot" title="Sincronización"></div>
+      <div class="gbadge" onclick="openModal('modal-turno')">
+        <svg fill="white" viewBox="0 0 24 24" width="10" height="10"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+        <span id="grd-name">Sin turno</span>
+      </div>
+      <button class="hbtn hidden" id="adm-btn" onclick="openAdminPanel()">⚙</button>
+      <button class="hbtn" onclick="doLogout()">Salir</button>
+    </div>
+  </header>
+
+  <nav class="nav">
+    <button class="nb active" onclick="showSec('dashboard',this)"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Inicio</button>
+    <button class="nb" onclick="showSec('residentes',this)"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>Residentes</button>
+    <button class="nb" onclick="showSec('visitas',this)"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Visitas</button>
+    <button class="nb" onclick="showSec('encomiendas',this)"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4z"/></svg>Encomiendas</button>
+    <button class="nb" onclick="showSec('guardias',this)"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>Guardias</button>
+    <button class="nb" onclick="showSec('bitacora',this)"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>Bitácora</button>
+  </nav>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div id="section-dashboard" class="section active">
+      <div id="remp-banner" class="remp-banner hidden"></div>
+      <div id="sync-banner" class="alert a-inf hidden" style="margin-bottom:0.7rem"></div>
+      <div class="sg">
+        <div class="sc"><div class="si" style="background:var(--bl)"><svg fill="var(--blue)" viewBox="0 0 24 24" width="17" height="17"><path d="M12 12c2.7 0 5-2.3 5-5S14.7 2 12 2 7 4.3 7 7s2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div><div class="sn" id="st-r">0</div><div class="sl">Residentes</div></div>
+        <div class="sc"><div class="si" style="background:var(--tl)"><svg fill="var(--teal)" viewBox="0 0 24 24" width="17" height="17"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div><div class="sn" id="st-v">0</div><div class="sl">Visitas Hoy</div></div>
+        <div class="sc"><div class="si" style="background:var(--ol)"><svg fill="var(--orange)" viewBox="0 0 24 24" width="17" height="17"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4z"/></svg></div><div class="sn" id="st-e">0</div><div class="sl">Encomiendas</div></div>
+        <div class="sc"><div class="si" style="background:var(--rl)"><svg fill="var(--red)" viewBox="0 0 24 24" width="17" height="17"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></div><div class="sn" id="st-b">0</div><div class="sl">Reclamos</div></div>
+      </div>
+      <div class="card"><div class="ct">Guardia en Turno</div><div id="dash-grd"><div class="tsm tc" style="padding:0.4rem">Sin turno activo</div></div></div>
+      <div class="card"><div class="ct">Últimas Visitas</div><div id="dash-vis"></div></div>
+      <div class="card"><div class="ct">Encomiendas Pendientes</div><div id="dash-enc"></div></div>
+    </div>
+
+    <!-- RESIDENTES -->
+    <div id="section-residentes" class="section">
+      <!-- Filtro por dpto -->
+      <div class="card">
+        <div class="ct">Buscar Residente</div>
+        <div class="fr">
+          <div><label>Filtrar por Depto</label>
+            <select id="r-filtro-dpto" onchange="renderRes()">
+              <option value="">Todos los deptos</option>
+            </select>
+          </div>
+          <div><label>Buscar por nombre</label>
+            <input type="text" id="r-buscar" placeholder="Nombre..." oninput="renderRes()"/>
+          </div>
+        </div>
+      </div>
+      <div id="res-form-card" class="card hidden">
+        <div class="ct">Nuevo Residente</div>
+        <div class="fg"><label>Depto / Casa</label><input type="text" id="r-dpto" placeholder="B-402" oninput="this.value=this.value.toUpperCase()"/></div>
+        <div class="fg"><label>Nombre Completo</label><input type="text" id="r-nom" placeholder="Juan Pérez González" oninput="autoCapWords(this)"/></div>
+        <div class="fg">
+          <label>Tipo de Identificación</label>
+          <select id="r-id-tipo" onchange="toggleIdTipo()">
+            <option value="rut">RUT (Chile)</option>
+            <option value="pasaporte">Pasaporte</option>
+            <option value="dni">DNI / Cédula extranjera</option>
+            <option value="otro">Otro documento</option>
+          </select>
+        </div>
+        <div class="fg" id="r-rut-wrap">
+          <label>RUT</label><input type="text" id="r-rut" oninput="rutField('r-rut','r-rut-h')"/><div class="rut-hint" id="r-rut-h"></div>
+        </div>
+        <div class="fg hidden" id="r-doc-wrap">
+          <label>Número de Documento</label><input type="text" id="r-doc" placeholder="Ej: A1234567"/>
+        </div>
+        <div class="fr">
+          <div><label>Teléfono / WhatsApp</label><input type="tel" id="r-tel" placeholder="+56912345678"/></div>
+          <div><label>Correo</label><input type="email" id="r-email"/></div>
+        </div>
+        <div id="r-alert" class="hidden"></div>
+        <button class="btn btn-p" onclick="agregarRes()">+ Registrar Residente</button>
+      </div>
+      <div id="admin-res" class="card hidden">
+        <div class="ct">Importar / Exportar</div>
+        <div class="btn-row">
+          <button class="btn btn-pur btn-sm" onclick="exportRes()">⬇ Excel</button>
+          <button class="btn btn-ora btn-sm" onclick="$i('imp-res').click()">⬆ Importar/Actualizar</button>
+          <button class="btn btn-out btn-sm" onclick="plantillaRes()">📄 Plantilla</button>
+        </div>
+        <input type="file" id="imp-res" accept=".xlsx,.xls" class="hidden" onchange="importRes(event)"/>
+        <p class="tsm mt1">Al importar: duplicados se <strong>actualizan</strong>. Columnas: Depto · Nombre · Tipo ID · Número ID · Teléfono · Correo</p>
+      </div>
+      <div class="card">
+        <div class="ct">Residentes (<span id="r-cnt">0</span>)</div>
+        <div id="r-lista"><div class="tsm tc" style="padding:1rem">Sin residentes</div></div>
+      </div>
+    </div>
+
+    <!-- VISITAS -->
+    <div id="section-visitas" class="section">
+      <div class="card">
+        <div class="ct">Verificar Autorización Previa</div>
+        <div style="display:flex;gap:0.4rem"><input type="text" id="chk-rut" placeholder="Número de ID o nombre..." style="flex:1"/><button class="btn btn-teal btn-sm" onclick="verificarAut()">🔍</button></div>
+        <div id="chk-result" class="hidden mt1"></div>
+      </div>
+      <div class="card">
+        <div class="ct">Registrar Visita</div>
+        <div class="fg"><label>Depto a Visitar</label><select id="v-dpto" onchange="cargarAutDpto();buscarVisitaAutorizada()"><option value="">Seleccionar...</option></select></div>
+        <div class="fg"><label>Quién Autoriza (residente)</label><select id="v-aut"><option value="">Seleccionar...</option></select></div>
+        <div id="visita-aut-prev" class="hidden" style="margin-bottom:0.6rem"></div>
+        <div class="fg"><label>Nombre del Visitante</label><input type="text" id="v-nom" oninput="autoCapWords(this)"/></div>
+        <div class="fg">
+          <label>Tipo de Identificación</label>
+          <select id="v-id-tipo">
+            <option value="rut">RUT (Chile)</option>
+            <option value="pasaporte">Pasaporte</option>
+            <option value="dni">DNI / Cédula extranjera</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+        <div class="fg"><label>Número de Identificación</label><input type="text" id="v-rut" oninput="autoFillVis();if(v('v-id-tipo')==='rut')rutField('v-rut','v-rut-h')"/><div class="rut-hint" id="v-rut-h"></div></div>
+        <div class="tr2"><span class="tl2">¿Ingresa con vehículo?</span><div class="tog" id="tg-veh" onclick="tog('veh')"></div></div>
+        <div id="cv" class="hidden" style="margin-top:0.35rem">
+          <div class="fr">
+            <div><label>Patente</label><input type="text" id="v-pat" placeholder="ABCD12" oninput="this.value=this.value.toUpperCase().replace(/\s/g,'')"/></div>
+            <div><label>Estacionamiento</label><input type="text" id="v-est" placeholder="E-12"/></div>
+          </div>
+        </div>
+        <div class="tr2"><span class="tl2">¿Visita Autorizada Recurrente?</span><div class="tog" id="tg-aut" onclick="tog('aut')"></div></div>
+        <div id="ca" class="hidden" style="margin-top:0.35rem">
+          <div class="fr">
+            <div>
+              <label>Autorizada hasta</label>
+              <input type="date" id="v-hasta"/>
+            </div>
+            <div>
+              <label>Vigencia única (hrs)</label>
+              <select id="v-vigencia">
+                <option value="0">Recurrente (usa fecha)</option>
+                <option value="3">3 horas</option>
+                <option value="6">6 horas</option>
+                <option value="12">12 horas</option>
+                <option value="custom">Personalizado</option>
+              </select>
+            </div>
+          </div>
+          <div id="v-vigencia-custom" class="fg hidden"><label>Horas personalizadas</label><input type="number" id="v-vigencia-hrs" min="1" max="72" value="4"/></div>
+        </div>
+        <div class="fg"><label>Observaciones</label><textarea id="v-obs"></textarea></div>
+        <div id="v-alert" class="hidden mt1"></div>
+        <button class="btn btn-p mt1" onclick="registrarVis()">✓ Registrar Entrada</button>
+      </div>
+      <div id="admin-vis" class="card hidden"><button class="btn btn-pur btn-sm" onclick="exportVis()">⬇ Exportar Visitas</button></div>
+      <div class="card"><div class="ct">Visitas (<span id="v-cnt">0</span>)</div><div id="v-lista"></div></div>
+    </div>
+
+    <!-- ENCOMIENDAS -->
+    <div id="section-encomiendas" class="section">
+      <div class="card">
+        <div class="ct">Buscar Destinatario</div>
+        <div class="fg"><label>Por Depto</label><select id="e-dpto-sel" onchange="buscarPorDpto()"><option value="">Seleccionar depto...</option></select></div>
+        <div class="fg"><label>Por Nombre</label><input type="text" id="e-buscar-nom" placeholder="Nombre del residente..." oninput="buscarPorNom()"/><div id="e-nom-res" class="hidden search-res"></div></div>
+        <div id="e-dest-sel" class="hidden"><div class="fg"><label>Residente(s)</label><select id="e-res-sel" onchange="selDest()"><option value="">Seleccionar...</option></select></div><div id="e-dest-info" class="info-box hidden"></div></div>
+      </div>
+      <div class="card">
+        <div class="ct">Registrar Encomienda</div>
+        <div class="fr"><div><label>Destinatario</label><input type="text" id="e-nd" readonly/></div><div><label>Depto</label><input type="text" id="e-dd" readonly/></div></div>
+        <hr>
+        <div class="fg"><label>RUT / ID Repartidor (opc.)</label><input type="text" id="e-rr" oninput="buscarRep()"/></div>
+        <div class="fg"><label>Nombre Repartidor</label><input type="text" id="e-nr" oninput="autoCapWords(this)"/></div>
+        <div class="fg"><label>Empresa</label><select id="e-emp" onchange="chkOtraEmp()"><option value="">Seleccionar...</option><option>Chilexpress</option><option>Correos de Chile</option><option>Starken</option><option>Blue Express</option><option>DHL</option><option>FedEx</option><option>Shippify</option><option value="Otra">Otra...</option></select></div>
+        <div id="e-emp-otro" class="fg hidden"><label>Especificar Empresa</label><input type="text" id="e-emp-txt"/></div>
+        <div class="fg"><label>Observaciones</label><textarea id="e-obs"></textarea></div>
+        <div id="e-alert" class="hidden mt1"></div>
+        <button class="btn btn-p mt1" onclick="registrarEnc()">📦 Registrar Encomienda</button>
+      </div>
+      <div id="admin-enc" class="card hidden"><button class="btn btn-pur btn-sm" onclick="exportEnc()">⬇ Exportar Encomiendas</button></div>
+      <div class="card">
+        <div style="display:flex;gap:5px;margin-bottom:0.6rem;flex-wrap:wrap">
+          <button class="btn btn-out btn-sm" onclick="filtEnc('pendientes')">Pendientes</button>
+          <button class="btn btn-ok btn-sm" onclick="filtEnc('entregadas')">Entregadas</button>
+          <button class="btn btn-out btn-sm" onclick="filtEnc('todas')">Todas</button>
+        </div>
+        <div class="ct">Encomiendas (<span id="e-cnt">0</span> pendientes)</div>
+        <div id="e-lista"></div>
+      </div>
+    </div>
+
+    <!-- GUARDIAS -->
+    <div id="section-guardias" class="section">
+      <div id="admin-grd" class="card hidden">
+        <div class="ct">Crear / Editar Usuario</div>
+        <input type="hidden" id="g-edit-id"/>
+        <div class="fg"><label>Nombre Completo</label><input type="text" id="g-nom" oninput="autoCapWords(this)"/></div>
+        <div class="fr"><div><label>RUT</label><input type="text" id="g-rut" oninput="rutField('g-rut','g-rut-h')"/><div class="rut-hint" id="g-rut-h"></div></div><div><label>Clave</label><input type="password" id="g-clave" placeholder="(sin cambio si vacío al editar)"/></div></div>
+        <div class="fr"><div><label>Correo</label><input type="email" id="g-email"/></div><div><label>Teléfono</label><input type="tel" id="g-tel"/></div></div>
+        <div class="fg"><label>Rol</label>
+          <select id="g-rol">
+            <option value="guardia">Guardia</option>
+            <option value="supervisor">Jefe de Seguridad / Supervisor</option>
+            <option value="comite">Miembro Comité de Administración</option>
+          </select>
+        </div>
+        <div id="g-perms-box" class="hidden">
+          <label style="margin-bottom:6px;display:block">Permisos adicionales</label>
+          <div class="perm-grid">
+            <div class="perm-item"><input type="checkbox" id="p-res">Gestionar Residentes</div>
+            <div class="perm-item"><input type="checkbox" id="p-export">Exportar datos</div>
+            <div class="perm-item"><input type="checkbox" id="p-enc-forzar">Forzar entrega</div>
+            <div class="perm-item"><input type="checkbox" id="p-bit">Cerrar reportes</div>
+            <div class="perm-item"><input type="checkbox" id="p-users">Gestionar usuarios</div>
+            <div class="perm-item"><input type="checkbox" id="p-turnos">Asignar turnos</div>
+            <div class="perm-item"><input type="checkbox" id="p-sync">Sincronizar datos</div>
+          </div>
+        </div>
+        <div class="tr2"><span class="tl2">Cambiar clave al primer ingreso</span><div class="tog on" id="tg-debecambiar" onclick="this.classList.toggle('on')"></div></div>
+        <div id="g-alert" class="hidden mt1"></div>
+        <div class="btn-row">
+          <button class="btn btn-p" style="flex:1" onclick="guardarGrd()">Guardar Usuario</button>
+          <button class="btn btn-out" onclick="limpiarFormGrd()">Limpiar</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ct">Reemplazo Temporal</div>
+        <div id="remp-info" class="tsm" style="margin-bottom:0.5rem;color:var(--gray)">Sin reemplazo activo</div>
+        <div class="fg"><label>Quién reemplaza</label><select id="remp-quien"><option value="">Seleccionar...</option><option value="aseo">Personal de Aseo</option><option value="admin">Administración</option><option value="otro">Otro (escribir)...</option></select></div>
+        <div id="remp-otro-f" class="fg hidden"><label>Nombre del reemplazante</label><input type="text" id="remp-otro-txt" oninput="autoCapWords(this)"/></div>
+        <div class="fr"><div><label>Motivo</label><select id="remp-motivo"><option value="colacion">Colación</option><option value="salida">Salida momentánea</option><option value="emergencia">Emergencia</option><option value="otro">Otro</option></select></div><div><label>Duración</label><select id="remp-dur"><option value="30">30 min</option><option value="60">1 hora</option><option value="90">1:30 hrs</option><option value="120">2 horas</option><option value="0">Hasta aviso</option></select></div></div>
+        <div class="btn-row"><button class="btn btn-ora btn-sm" onclick="activarRemp()">Activar</button><button class="btn btn-ok btn-sm" onclick="finalizarRemp()">Finalizar</button></div>
+      </div>
+
+      <div class="card">
+        <div class="ct">Asignar Turno</div>
+        <div class="fg"><label>Usuario</label><select id="t-g"><option value="">Seleccionar...</option></select></div>
+        <div class="fr">
+          <div><label>Turno</label><select id="t-t"><option value="dia">Día (07:00–19:00)</option><option value="noche">Noche (19:00–07:00)</option></select></div>
+          <div><label>Fecha</label><input type="date" id="t-f"/></div>
+        </div>
+        <div id="t-alert" class="hidden mt1"></div>
+        <button class="btn btn-p mt1" onclick="asignarTurno()">Asignar Turno</button>
+      </div>
+      <div class="card"><div class="ct">Usuarios (<span id="g-cnt">0</span>)</div><div id="g-lista"></div></div>
+      <div class="card"><div class="ct">Turnos Recientes</div><div id="t-lista"></div></div>
+    </div>
+
+    <!-- BITACORA -->
+    <div id="section-bitacora" class="section">
+      <div class="card">
+        <div class="ct">Nuevo Reporte</div>
+        <div class="fr"><div><label>Depto / Área</label><select id="b-dpto"><option value="">Seleccionar...</option></select></div><div><label>Tipo</label><select id="b-tipo"><option value="reclamo">Reclamo</option><option value="ruidos">Ruidos Molestos</option><option value="daño">Daño Área Común</option><option value="seguridad">Seguridad</option><option value="aseo">Aseo</option><option value="mascota">Mascotas</option><option value="otro">Otro</option></select></div></div>
+        <div class="fg"><label>Descripción</label><textarea id="b-desc" style="min-height:75px"></textarea></div>
+        <div class="fg"><label>Prioridad</label><select id="b-prio"><option value="normal">Normal</option><option value="urgente">Urgente</option><option value="baja">Baja</option></select></div>
+        <div id="b-alert" class="hidden mt1"></div>
+        <button class="btn btn-p mt1" onclick="crearReporte()">📋 Registrar Reporte</button>
+      </div>
+      <div id="admin-bit" class="card hidden"><button class="btn btn-pur btn-sm" onclick="exportBit()">⬇ Exportar Bitácora</button></div>
+      <div class="card">
+        <div class="ct">Bitácora (<span id="b-cnt">0</span> abiertos)</div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:0.65rem">
+          <button class="btn btn-out btn-sm" onclick="filtBit('todos')">Todos</button>
+          <button class="btn btn-red btn-sm" onclick="filtBit('abierto')">Abiertos</button>
+          <button class="btn btn-ora btn-sm" onclick="filtBit('en_proceso')">En Proceso</button>
+          <button class="btn btn-ok btn-sm" onclick="filtBit('cerrado')">Cerrados</button>
+        </div>
+        <div id="b-lista"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALES -->
+<div class="mbg" id="modal-turno">
+  <div class="modal">
+    <div class="mt2">Turno Activo <button class="mc" onclick="closeModal('modal-turno')">✕</button></div>
+    <div id="turno-info" class="tsm" style="margin-bottom:0.65rem"></div>
+    <div class="fg"><label>Activar turno</label><select id="sel-turno" onchange="setTurnoActivo()"><option value="">Sin turno activo</option></select></div>
+  </div>
+</div>
+
+<div class="mbg" id="modal-admin">
+  <div class="modal" style="max-height:92vh;overflow-y:auto">
+    <div class="mt2">⚙ Panel Administrador <button class="mc" onclick="closeModal('modal-admin')">✕</button></div>
+    <div class="sync-panel">
+      <div class="sync-status-row"><div class="sdot" id="s-dot"></div><span id="s-status-txt">Sin configurar</span><span class="tsm" id="s-last-sync" style="margin-left:auto"></span></div>
+      <div class="fg"><label>URL Apps Script</label><input type="url" id="s-url" placeholder="https://script.google.com/macros/s/.../exec"/></div>
+      <div class="fg"><label>Auto-sync cada</label><select id="s-interval"><option value="0">Sin auto-sync</option><option value="5">5 min</option><option value="10">10 min</option><option value="15" selected>15 min</option><option value="30">30 min</option></select></div>
+      <div class="btn-row">
+        <button class="btn btn-teal btn-sm" onclick="verificarConexion()">🔌 Verificar</button>
+        <button class="btn btn-navy btn-sm" onclick="syncPush()">⬆ Subir ahora</button>
+        <button class="btn btn-sec btn-sm" onclick="syncPull()">⬇ Bajar ahora</button>
+      </div>
+      <div id="sync-alert" class="hidden mt1"></div>
+      <div class="sync-log" id="sync-log"></div>
+    </div>
+    <hr>
+    <p style="font-size:0.82rem;font-weight:800;color:var(--blue);margin-bottom:0.55rem">Vaciado de Registros</p>
+    <div class="vaciado-box">⚠ Exporta el respaldo antes de vaciar. Esta acción borra registros del dispositivo pero los conserva en Google Sheets.</div>
+    <div class="fg"><label>Vaciar registros con más de</label>
+      <select id="vaciar-dias">
+        <option value="30">30 días</option><option value="60" selected>60 días</option>
+        <option value="90">90 días</option><option value="0">Todos (vaciado completo)</option>
+      </select>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-pur btn-sm" onclick="exportCompleto()">📊 Exportar Todo</button>
+      <button class="btn btn-red btn-sm" onclick="vaciarRegistros()">🗑 Vaciar</button>
+    </div>
+    <hr>
+    <p style="font-size:0.82rem;font-weight:800;color:var(--blue);margin-bottom:0.55rem">Restablecer Clave</p>
+    <div class="fg"><label>Usuario</label><select id="rst-usr"></select></div>
+    <div class="fg"><label>Nueva Clave</label><input type="password" id="rst-clave"/></div>
+    <div class="tr2" style="margin-bottom:0.4rem"><span class="tl2" style="font-size:0.78rem">Forzar cambio al ingresar</span><div class="tog on" id="tg-rst-forzar" onclick="this.classList.toggle('on')"></div></div>
+    <div id="rst-alert" class="hidden"></div>
+    <button class="btn btn-navy btn-sm" onclick="resetClave()">Restablecer</button>
+    <hr>
+    <p style="font-size:0.82rem;font-weight:800;color:var(--blue);margin-bottom:0.55rem">Clave de acceso a la app</p>
+    <div class="fg"><label>Clave de disuasión actual</label><input type="text" id="adm-gate-key" placeholder="Clave de la URL de acceso"/></div>
+    <button class="btn btn-sec btn-sm" onclick="saveGateKey()">Guardar clave</button>
+    <hr>
+    <div class="fg"><label>Correo del Condominio</label><input type="email" id="adm-email"/></div>
+    <button class="btn btn-sec btn-sm" onclick="saveAdminCfg()">Guardar configuración</button>
+    <hr>
+    <p class="tsm" style="color:var(--red);cursor:pointer;margin-top:0.35rem" onclick="if(confirm('¿Resetear TODOS los datos de este condominio?'))resetAll()">⚠ Resetear todos los datos</p>
+  </div>
+</div>
+
+<div class="mbg" id="modal-recover">
+  <div class="modal">
+    <div class="mt2">Recuperar Clave <button class="mc" onclick="closeModal('modal-recover')">✕</button></div>
+    <div id="recover-body">
+      <p class="tsm" style="margin-bottom:0.8rem">Ingresa tu RUT para identificarte. El administrador recibirá la solicitud y restablecerá tu clave.</p>
+      <div class="fg"><label>Tu RUT</label><input type="text" id="rec-rut" oninput="rutField('rec-rut','rec-rut-h')"/><div class="rut-hint" id="rec-rut-h"></div></div>
+      <div id="rec-res" class="hidden mt1"></div>
+      <div class="btn-row">
+        <button class="btn btn-p btn-sm" onclick="solicitarRecov()">Solicitar restablecimiento</button>
+      </div>
+      <div id="rec-admin-info" class="hidden" style="margin-top:0.8rem">
+        <p class="tsm">Contacta al administrador:</p>
+        <div id="rec-admin-contact" class="info-box" style="margin-top:0.3rem"></div>
+        <div class="btn-row" style="margin-top:0.5rem">
+          <button class="btn btn-ok btn-sm" id="rec-wa-btn" onclick="notifRecovWA()">💬 WhatsApp</button>
+          <button class="btn btn-sec btn-sm" id="rec-email-btn" onclick="notifRecovEmail()">✉ Email</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mbg" id="modal-entregar">
+  <div class="modal">
+    <div class="mt2">Registrar Entrega <button class="mc" onclick="closeModal('modal-entregar')">✕</button></div>
+    <div id="ent-info" class="info-box"></div>
+    <div class="fg"><label>RUT / ID de quien retira</label><input type="text" id="ent-rut" oninput="autoFillRetiro();if(true)rutField('ent-rut','ent-rut-h')"/><div class="rut-hint" id="ent-rut-h"></div></div>
+    <div class="fg"><label>Nombre de quien retira</label><input type="text" id="ent-nom" oninput="autoCapWords(this)"/></div>
+    <div id="ent-no-reg" class="hidden"><div class="alert a-war">Persona no registrada en esta unidad.</div><div class="fg"><label>¿Quién autorizó el retiro?</label><input type="text" id="ent-autoriza" placeholder="Nombre del residente que autorizó" oninput="autoCapWords(this)"/></div></div>
+    <div id="ent-pin-sec"><p class="tsm" style="margin-bottom:0.35rem">Solicita el PIN al residente:</p><div class="fg"><label>PIN (4 dígitos)</label><input type="text" id="ent-pin" placeholder="0000" maxlength="4" style="text-align:center;font-size:1.4rem;letter-spacing:8px;font-weight:800"/></div></div>
+    <div class="fg"><label>Observaciones</label><textarea id="ent-obs"></textarea></div>
+    <div id="ent-alert" class="hidden mt1"></div>
+    <button class="btn btn-p mt1" onclick="confirmarEntrega()">✓ Confirmar Entrega</button>
+    <div id="ent-admin-bypass" class="hidden mt1"><hr><p class="tsm" style="color:var(--red)">Forzar entrega (admin/supervisor):</p><div class="fg"><label>Tu Clave</label><input type="password" id="ent-adm-clave"/></div><button class="btn btn-red btn-sm" onclick="forzarEntrega()">Forzar Entrega</button></div>
+  </div>
+</div>
+
+<div class="mbg" id="modal-notif">
+  <div class="modal">
+    <div class="mt2">Notificar al Residente <button class="mc" onclick="closeModal('modal-notif')">✕</button></div>
+    <div id="notif-info" class="info-box"></div>
+    <div class="pin-box"><div style="font-size:0.72rem;opacity:0.85;font-weight:600">PIN DE RETIRO — muéstralo solo al enviar, no lo dejes visible</div><div class="pin-num" id="pin-display">—</div><div style="font-size:0.68rem;opacity:0.8;margin-top:4px">El residente presenta este PIN al guardia para retirar su encomienda.</div></div>
+    <div class="btn-row" style="margin-bottom:0.5rem">
+      <button class="btn btn-ok btn-sm" onclick="notifWA()">💬 WhatsApp</button>
+      <button class="btn btn-sec btn-sm" onclick="notifEmail()">✉ Email</button>
+      <button class="btn btn-out btn-sm" onclick="copiarMsg()">📋 Copiar</button>
+    </div>
+    <p class="tsm">WhatsApp y Email abren la app con el mensaje listo — presiona enviar en tu dispositivo. Si el PIN se extravía, el admin puede forzar la entrega.</p>
+  </div>
+</div>
+
+<div class="mbg" id="modal-obs-vis">
+  <div class="modal">
+    <div class="mt2">Observación a Visita <button class="mc" onclick="closeModal('modal-obs-vis')">✕</button></div>
+    <div id="obs-vis-ref" class="info-box tsm"></div>
+    <div class="fg"><label>Observación</label><textarea id="obs-vis-txt" style="min-height:75px"></textarea></div>
+    <div id="obs-vis-alert" class="hidden mt1"></div>
+    <button class="btn btn-p mt1" onclick="guardarObsVis()">Guardar</button>
+  </div>
+</div>
+
+<div class="mbg" id="modal-obs-bit">
+  <div class="modal">
+    <div class="mt2">Agregar Observación <button class="mc" onclick="closeModal('modal-obs-bit')">✕</button></div>
+    <div id="obs-bit-ref" class="info-box tsm"></div>
+    <div class="fg"><label>Observación</label><textarea id="obs-bit-txt" style="min-height:75px"></textarea></div>
+    <div class="fg"><label>¿Cambiar estado?</label><select id="obs-bit-est"><option value="">No cambiar</option><option value="en_proceso">En Proceso</option><option value="cerrado">Cerrado / Resuelto</option><option value="abierto">Reabrir</option></select></div>
+    <div id="obs-bit-alert" class="hidden mt1"></div>
+    <button class="btn btn-p mt1" onclick="guardarObsBit()">Guardar</button>
+  </div>
+</div>
+
+<div class="mbg" id="modal-confirm-pull">
+  <div class="modal">
+    <div class="mt2">⬇ Bajar datos desde Sheets <button class="mc" onclick="closeModal('modal-confirm-pull')">✕</button></div>
+    <div class="alert a-war">Esto reemplazará residentes y usuarios locales con los datos del Google Sheet. Los registros de visitas, encomiendas y bitácora se subirán primero.</div>
+    <div class="btn-row" style="margin-top:0.7rem">
+      <button class="btn btn-red btn-sm" onclick="confirmarPull()">Sí, bajar datos</button>
+      <button class="btn btn-out btn-sm" onclick="closeModal('modal-confirm-pull')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<script>
+// ================================================================
+// GLOBAL STATE
+// ================================================================
+const ACCESS_KEY_STORAGE = 'igp_gate_v4';
+const CONDOS_STORAGE = 'igp_condos_v4';
+const DEFAULT_GATE_KEY = 'IGP2024'; // clave por defecto — cambiar desde admin
+
+let condos = []; // lista de condominios
+let activeCondo = null; // índice activo
+let db = null; // datos del condominio activo
+let cu = null; // usuario actual
+let togs = {veh:false,aut:false};
+let encEntregar=null,visObs=null,bitObs=null,notifEncId=null,notifPin=null,bitFiltro='todos',encFiltro='pendientes',destSel=null;
+let syncTimer=null,syncLogs=[];
+
+function getDB(){return db;}
+function saveDB(){
+  if(activeCondo===null)return;
+  condos[activeCondo].db=db;
+  localStorage.setItem(CONDOS_STORAGE,JSON.stringify(condos));
+}
+function loadCondos(){
+  try{const s=localStorage.getItem(CONDOS_STORAGE);if(s)condos=JSON.parse(s);}catch(e){condos=[];}
+}
+function saveCondos(){localStorage.setItem(CONDOS_STORAGE,JSON.stringify(condos));}
+
+// ================================================================
+// ACCESS KEY GATE
+// ================================================================
+function checkGateKey(){
+  const key=v('gate-key');
+  const stored=localStorage.getItem(ACCESS_KEY_STORAGE)||DEFAULT_GATE_KEY;
+  if(key===stored){
+    $i('key-gate').classList.add('hidden');
+    loadCondos();
+    mostrarSelector();
+  } else {
+    showAlert('gate-err','Clave incorrecta','a-err');
+    $i('gate-err').classList.remove('hidden');
+  }
+}
+function saveGateKey(){
+  const k=v('adm-gate-key');
+  if(!k){alert('Ingresa una clave');return;}
+  localStorage.setItem(ACCESS_KEY_STORAGE,k);
+  alert('✓ Clave de acceso actualizada. Compártela solo con quienes deben ingresar.');
+}
+
+// ================================================================
+// CONDO SELECTOR
+// ================================================================
+function mostrarSelector(){
+  $i('condo-selector').classList.remove('hidden');
+  $i('login-screen').classList.add('hidden');
+  $i('main-app').classList.add('hidden');
+  $i('setup-screen').classList.add('hidden');
+  renderCondoList();
+}
+function renderCondoList(){
+  const el=$i('condo-list');
+  if(!condos.length){el.innerHTML='<p class="tsm tc">No hay condominios. Agrega uno.</p>';return;}
+  el.innerHTML=condos.map((cd,i)=>`
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+      <div class="condo-card" id="condo-card-${i}" onclick="selectCondoCard(${i})" style="flex:1;margin-bottom:0">
+        <div class="condo-name">${cd.condominio.nombre}</div>
+        <div class="condo-info">${cd.condominio.rut}${cd.condominio.direccion?' · '+cd.condominio.direccion:''}</div>
+      </div>
+      ${isSuperAdmin()?`<button class="btn btn-red btn-sm" onclick="eliminarCondo(${i},event)" title="Eliminar condominio" style="flex-shrink:0;padding:6px 9px">✕</button>`:''}
+    </div>`).join('');
+}
+function isSuperAdmin(){
+  // Es superadmin si tiene acceso al selector de condominios (paso post-clave)
+  return pendingUser&&pendingUser.user&&pendingUser.user.rol==='admin';
+}
+function eliminarCondo(i,ev){
+  ev.stopPropagation();
+  const nom=condos[i]?.condominio?.nombre||'este condominio';
+  if(!confirm('¿Eliminar "'+nom+'"? Esta accion no se puede deshacer. Los datos en Google Sheets no se borran.'))return;
+  condos.splice(i,1);
+  saveCondos();
+  renderCondoList();
+  // Deselect if removed
+  if(selectedCondoIdx===i)selectedCondoIdx=null;
+  else if(selectedCondoIdx>i)selectedCondoIdx--;
+}
+let selectedCondoIdx=null;
+function selectCondoCard(i){
+  selectedCondoIdx=i;
+  document.querySelectorAll('.condo-card').forEach(c=>c.classList.remove('selected'));
+  $i('condo-card-'+i)?.classList.add('selected');
+}
+function seleccionarCondo(){
+  if(selectedCondoIdx===null){showAlert('condo-err','Selecciona un condominio','a-err');$i('condo-err').classList.remove('hidden');return;}
+  const condo=condos[selectedCondoIdx];
+  const rutInput=v('condo-rut-input');
+  if(!validRut(rutInput)||rutInput!==condo.condominio.rut){showAlert('condo-err','RUT incorrecto para este condominio','a-err');$i('condo-err').classList.remove('hidden');return;}
+  activeCondo=selectedCondoIdx;
+  db=condo.db||emptyDB();
+  condo.db=db;
+  $i('condo-err').classList.add('hidden');
+  $i('condo-selector').classList.add('hidden');
+  showLogin();
+}
+function mostrarNuevoCondo(){$i('condo-selector').classList.add('hidden');$i('setup-screen').classList.remove('hidden');}
+function volverSelector(){$i('setup-screen').classList.add('hidden');$i('login-screen').classList.add('hidden');mostrarSelector();}
+function emptyDB(){return{admin:null,usuarios:[],turnos:[],turnoActivoId:null,remplazTemp:null,residentes:[],visitas:[],encomiendas:[],bitacora:[],syncUrl:'',syncInterval:15,lastSync:null};}
+
+// ================================================================
+// SETUP
+// ================================================================
+function finishSetup(){
+  const nom=v('s-nom'),rut=v('s-rut'),dir=v('s-dir'),email=v('s-email'),
+        anom=v('s-anom'),arut=v('s-arut'),aclave=v('s-aclave'),sheeturl=v('s-sheeturl');
+  if(!nom||!rut){showAlert('setup-err','Nombre y RUT del condominio son obligatorios','a-err');return;}
+  if(!validRut(rut)){showAlert('setup-err','RUT del condominio invalido','a-err');return;}
+  if(!anom||!arut||!aclave){showAlert('setup-err','Completa los datos del administrador','a-err');return;}
+  if(!validRut(arut)){showAlert('setup-err','RUT del administrador invalido','a-err');return;}
+  const existIdx=condos.findIndex(cc=>cc.condominio.rut===rut);
+  const newDb=existIdx>=0?(condos[existIdx].db||emptyDB()):emptyDB();
+  newDb.admin={nombre:anom,rut:arut,clave:aclave,email,rol:'admin',debecambiar:false};
+  if(sUsuarios.length)newDb.usuarios=[...sUsuarios];
+  if(sResidentes.length)newDb.residentes=[...sResidentes];
+  if(sVisitas.length)newDb.visitas=[...sVisitas];
+  if(sEncomiendas.length)newDb.encomiendas=[...sEncomiendas];
+  if(sBitacora.length)newDb.bitacora=[...sBitacora];
+  if(sheeturl)newDb.syncUrl=sheeturl;
+  if(existIdx>=0){condos[existIdx].condominio={nombre:nom,rut,direccion:dir};condos[existIdx].db=newDb;activeCondo=existIdx;}
+  else{condos.push({condominio:{nombre:nom,rut,direccion:dir},db:newDb});activeCondo=condos.length-1;}
+  db=newDb; saveCondos();
+  sUsuarios=[];sResidentes=[];sVisitas=[];sEncomiendas=[];sBitacora=[];
+  $i('setup-screen').classList.add('hidden');
+  if(sheeturl){
+    // SOLO descarga (pull). NUNCA subir datos vacios al crear.
+    showLogin();
+    setTimeout(()=>autoInitialPull(),1000);
+  } else {
+    showLogin();
+    setTimeout(()=>alert('Condominio creado. Inicia sesion con tu RUT de administrador.'),300);
+  }
+}
+async function autoInitialPull(){
+  addSyncLog('Descargando datos iniciales desde Sheets...');
+  try{
+    const r=await callScript({action:'pullAll'});
+    applyPullData(r,true,true);
+    addSyncLog('✓ Datos iniciales cargados','ok');
+  }catch(e){addSyncLog('No se pudieron cargar datos iniciales: '+e.message,'err');}
+}
+
+// ================================================================
+// LOGIN / LOGOUT
+// ================================================================
+function showLogin(){
+  $i('login-screen').classList.remove('hidden');
+  $i('main-app').classList.add('hidden');
+  cu=null;
+  $i('l-rut').value='';$i('l-clave').value='';
+  $i('forzar-cambio').classList.add('hidden');
+  $i('login-btn').textContent='Ingresar';
+  if(activeCondo!==null&&condos[activeCondo]){
+    $i('login-condo-name').textContent=condos[activeCondo].condominio.nombre;
+  }
+}
+function doLogin(){
+  const rut=v('l-rut'),clave=v('l-clave');
+  $i('login-err').classList.add('hidden');
+  if(!validRut(rut)){showAlert('login-err','RUT inválido','a-err');return;}
+  // Buscar usuario
+  let user=null;
+  if(db.admin&&db.admin.rut===rut&&db.admin.clave===clave){user=db.admin;user.rol='admin';}
+  else{const u=db.usuarios.find(x=>x.rut===rut&&x.clave===clave&&x.activo);if(u)user=u;}
+  if(!user){$i('login-err').classList.remove('hidden');return;}
+  // Cambio forzado
+  if(user.debecambiar&&$i('forzar-cambio').classList.contains('hidden')){
+    $i('forzar-cambio').classList.remove('hidden');$i('login-btn').textContent='Cambiar clave y entrar';return;
+  }
+  if(user.debecambiar){
+    const nc=v('l-nueva'),cc=v('l-confirmar');
+    if(!nc||nc!==cc){showAlert('login-err','Las claves no coinciden','a-err');return;}
+    if(nc.length<4){showAlert('login-err','Mínimo 4 caracteres','a-err');return;}
+    user.clave=nc;user.debecambiar=false;saveDB();
+    if(db.syncUrl)syncPushSilent().catch(()=>{});
+  }
+  cu={rut,nombre:user.nombre,rol:user.rol,uid:user.id};
+  enterApp();
+}
+function doLogout(){cu=null;$i('login-screen').classList.remove('hidden');$i('main-app').classList.add('hidden');}
+function enterApp(){
+  $i('login-screen').classList.add('hidden');$i('main-app').classList.remove('hidden');
+  $i('hdr-cond').textContent=condos[activeCondo]?.condominio?.nombre||'—';
+  $i('adm-btn').classList.toggle('hidden',cu.rol!=='admin'&&!hasPerm('users'));
+  $i('res-form-card')?.classList.toggle('hidden',!hasPerm('addRes'));
+  ['admin-res','admin-vis','admin-enc','admin-bit'].forEach(id=>$i(id)&&$i(id).classList.toggle('hidden',!hasPerm('export')));
+  $i('admin-grd')?.classList.toggle('hidden',!hasPerm('users'));
+  // Auto-turno para guardias
+  if(cu.rol==='guardia'||cu.rol==='supervisor'){
+    const hoy=todayStr();const u=db.usuarios.find(x=>x.rut===cu.rut);
+    if(u){const t=db.turnos.find(x=>x.usuarioId===u.id&&x.fecha===hoy);if(t){db.turnoActivoId=t.id;saveDB();}}
+  }
+  if(db.admin){$i('adm-email').value=db.admin.email||'';}
+  if(db.syncUrl){$i('s-url').value=db.syncUrl;setSyncDot('ok');$i('s-status-txt').textContent='Configurado';if(db.lastSync)$i('s-last-sync').textContent='Sync: '+db.lastSync;iniciarAutoSync();}
+  const si=$i('s-interval');if(si&&db.syncInterval)si.value=db.syncInterval;
+  const gk=localStorage.getItem(ACCESS_KEY_STORAGE)||DEFAULT_GATE_KEY;
+  if($i('adm-gate-key'))$i('adm-gate-key').value=gk;
+  // Recover email
+  if($i('rec-email'))$i('rec-email').textContent=db.admin?.email||'';
+  updateTurnoUI();actualizarRempUI();updateDash();
+  // Si hay syncUrl, subir datos al entrar
+  if(db.syncUrl)setTimeout(()=>syncPushSilent().catch(()=>{}),2000);
+}
+function openAdminPanel(){poblarRstUsr();openModal('modal-admin');}
+
+// ================================================================
+// RECOVER
+// ================================================================
+function solicitarRecov(){
+  const rut=v('rec-rut');
+  if(!validRut(rut)){showAlert('rec-res','RUT inválido','a-err');$i('rec-res').classList.remove('hidden');return;}
+  const u=rut===db.admin?.rut?db.admin:db.usuarios.find(g=>g.rut===rut);
+  if(!u){showAlert('rec-res','Usuario no encontrado en este condominio','a-err');$i('rec-res').classList.remove('hidden');return;}
+  // Mostrar info de contacto del admin
+  $i('rec-admin-contact').innerHTML=`<strong>Administrador:</strong> ${db.admin?.nombre||'—'}<br>${db.admin?.email?'✉ '+db.admin.email:''}<br>Condominio: ${condos[activeCondo]?.condominio?.nombre||'—'}`;
+  $i('rec-admin-info').classList.remove('hidden');
+  showAlert('rec-res','Solicitud registrada. Contacta al administrador para restablecer tu clave.','a-inf');
+  $i('rec-res').classList.remove('hidden');
+}
+function notifRecovWA(){
+  const rut=v('rec-rut');const u=rut===db.admin?.rut?db.admin:db.usuarios.find(g=>g.rut===rut);
+  const msg=`Solicitud de restablecimiento de clave en IGP Control.\nCondominio: ${condos[activeCondo]?.condominio?.nombre||'—'}\nUsuario: ${u?.nombre||rut}\nRUT: ${rut}\nPor favor restablece la clave para este usuario.`;
+  const adminTel=db.admin?.tel||'';
+  if(!adminTel){alert('El administrador no tiene teléfono registrado.');return;}
+  window.open(`https://wa.me/${adminTel.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank');
+}
+function notifRecovEmail(){
+  const rut=v('rec-rut');const u=rut===db.admin?.rut?db.admin:db.usuarios.find(g=>g.rut===rut);
+  const email=db.admin?.email||'';
+  if(!email){alert('El administrador no tiene correo registrado.');return;}
+  window.open(`mailto:${email}?subject=Solicitud restablecimiento clave IGP Control&body=Usuario: ${u?.nombre||rut}%0ARUT: ${rut}%0ACondominio: ${condos[activeCondo]?.condominio?.nombre||'—'}`,'_blank');
+}
+
+// ================================================================
+// PERMISOS
+// ================================================================
+const PERMS_BASE={admin:{res:true,export:true,encForzar:true,bit:true,users:true,turnos:true,addRes:true,sync:true},supervisor:{res:false,export:true,encForzar:true,bit:true,users:true,turnos:true,addRes:false,sync:false},comite:{res:false,export:true,encForzar:false,bit:true,users:false,turnos:false,addRes:false,sync:false},guardia:{res:false,export:false,encForzar:false,bit:false,users:false,turnos:false,addRes:false,sync:false}};
+function hasPerm(p){if(!cu)return false;if(cu.rol==='admin')return true;const u=db.usuarios.find(x=>x.rut===cu.rut);if(!u)return false;const base=PERMS_BASE[u.rol]||PERMS_BASE.guardia;if(u.perms&&u.perms[p]!==undefined)return u.perms[p];return base[p]||false;}
+
+// ================================================================
+// FECHA / HORA
+// ================================================================
+function nowDT(){const d=new Date();return `${pad(d.getDate())}-${pad(d.getMonth()+1)}-${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;}
+function todayStr(){const d=new Date();return `${pad(d.getDate())}-${pad(d.getMonth()+1)}-${d.getFullYear()}`;}
+function todayISO(){return new Date().toISOString().split('T')[0];}
+function pad(n){return String(n).padStart(2,'0');}
+function parseFecha(s){
+  if(!s)return null;
+  if(s.includes('-')&&s.length===10&&s.indexOf('-')===4){// ISO
+    const[y,m,d]=s.split('-');return new Date(+y,+m-1,+d,23,59,59);
+  }
+  const p=s.split('-');if(p.length!==3)return null;
+  return new Date(+p[2],+p[1]-1,+p[0],23,59,59);
+}
+
+// ================================================================
+// RUT
+// ================================================================
+function lRut(r){return r.replace(/[^0-9kK]/g,'').toUpperCase();}
+function fmtRut(r){const c=lRut(r);if(c.length<2)return c;const dv=c.slice(-1);let b=c.slice(0,-1),f='';while(b.length>3){f='.'+b.slice(-3)+f;b=b.slice(0,-3);}return b+f+'-'+dv;}
+function validRut(r){const c=lRut(r);if(c.length<2)return false;const dv=c.slice(-1).toUpperCase(),b=c.slice(0,-1);if(!/^\d+$/.test(b))return false;let s=0,m=2,n=+b;while(n>0){s+=(n%10)*m;n=Math.floor(n/10);m=m===7?2:m+1;}const e=11-(s%11);return(e===11?'0':e===10?'K':String(e))===dv;}
+function rutField(iid,hid){const el=$i(iid),hint=hid?$i(hid):null;const c=lRut(el.value);if(c.length>=2)el.value=fmtRut(c);if(c.length<2){el.classList.remove('rut-ok','rut-err');if(hint)hint.textContent='';return;}const ok=validRut(el.value);el.classList.toggle('rut-ok',ok);el.classList.toggle('rut-err',!ok);if(hint){hint.className='rut-hint '+(ok?'ok':'err');hint.textContent=ok?'✓ RUT válido':'✗ RUT inválido';}}
+
+// ================================================================
+// HELPERS
+// ================================================================
+function $i(id){return document.getElementById(id);}
+function v(id){return $i(id)?$i(id).value.trim():'';}
+function ini(n){return(n||'').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'?';}
+function autoCapWords(el){const pos=el.selectionStart;el.value=el.value.replace(/(?:^|\s)\S/g,c=>c.toUpperCase());el.setSelectionRange(pos,pos);}
+function showAlert(id,msg,cls){const el=$i(id);if(!el)return;el.className='alert '+cls;el.textContent=msg;el.classList.remove('hidden');setTimeout(()=>el.classList.add('hidden'),3800);}
+function tog(k){togs[k]=!togs[k];$i('tg-'+k).classList.toggle('on',togs[k]);const m={veh:'cv',aut:'ca'};if(m[k])$i(m[k]).classList.toggle('hidden',!togs[k]);}
+function openModal(id){$i(id).classList.add('open');}
+function closeModal(id){$i(id).classList.remove('open');}
+function quienActua(){if(db.remplazTemp?.activo)return db.remplazTemp.nombre+' (Reemplazo)';return getTurnoNom();}
+function rolLabel(r){return{admin:'Administrador',supervisor:'Supervisor/Jefe Seg.',comite:'Comité Admin.',guardia:'Guardia'}[r]||r;}
+function showSec(id,btn){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));$i('section-'+id).classList.add('active');btn.classList.add('active');if(id==='dashboard')updateDash();if(id==='residentes'){renderRes();loadDptosFiltro();}if(id==='visitas'){renderVis();loadDptosVis();}if(id==='encomiendas'){renderEnc();loadDptosEnc();}if(id==='guardias'){renderGrd();renderTurnos();poblarGrdSel();}if(id==='bitacora'){renderBit();loadDptosBit();}}
+
+// ================================================================
+// SYNC — Google Apps Script (GET method, CORS-safe)
+// ================================================================
+function addSyncLog(msg,type='info'){
+  const el=$i('sync-log');if(!el)return;
+  syncLogs.unshift({msg,ts:nowDT(),type});if(syncLogs.length>15)syncLogs.pop();
+  el.innerHTML=syncLogs.map(l=>`<div style="color:${l.type==='err'?'#b52b27':l.type==='ok'?'#258a4e':'#5c6b7d'};padding:1px 0">[${l.ts}] ${l.msg}</div>`).join('');
+}
+function setSyncDot(state){
+  [$i('s-dot'),$i('sync-dot')].forEach(d=>{if(!d)return;d.className=d.className.replace(/\b(ok|busy|err)\b/g,'').trim()+' '+state;});
+}
+async function callScript(body){
+  const url=db.syncUrl||v('s-url');if(!url)throw new Error('URL no configurada');
+  const action=body.action||'ping';
+  let fetchUrl=`${url}?action=${encodeURIComponent(action)}`;
+  if(body.payload){
+    const dataStr=JSON.stringify(body.payload);
+    const encoded=encodeURIComponent(dataStr);
+    if(encoded.length<6000){fetchUrl+='&data='+encoded;}
+    else{
+      // Large payload: split into chunks via multiple calls
+      const parts={residentes:body.payload.residentes,visitas:body.payload.visitas};
+      const parts2={encomiendas:body.payload.encomiendas,bitacora:body.payload.bitacora};
+      const parts3={usuarios:body.payload.usuarios,turnos:body.payload.turnos,config:body.payload.config};
+      for(const p of [parts,parts2,parts3]){
+        const u=`${url}?action=pushAll&data=${encodeURIComponent(JSON.stringify(p))}`;
+        const r=await fetch(u);if(!r.ok)throw new Error('HTTP '+r.status);
+      }
+      return{ok:true,msg:'Datos enviados en partes',results:{}};
+    }
+  }
+  const res=await fetch(fetchUrl,{method:'GET'});
+  if(!res.ok)throw new Error(`HTTP ${res.status}. Verifica que el script esté publicado como "Cualquier persona".`);
+  const text=await res.text();
+  let data;try{data=JSON.parse(text);}catch(e){throw new Error('Respuesta inválida. Verifica la URL del script.');}
+  if(!data.ok)throw new Error(data.error||'Error en script');
+  return data;
+}
+async function verificarConexion(){
+  const url=v('s-url');if(!url){showAlert('sync-alert','Ingresa la URL','a-err');return;}
+  db.syncUrl=url;saveDB();setSyncDot('busy');addSyncLog('Verificando...');
+  try{
+    const r=await callScript({action:'ping'});
+    setSyncDot('ok');addSyncLog('✓ '+r.msg,'ok');showAlert('sync-alert','✓ Conexión exitosa','a-ok');
+    $i('s-status-txt').textContent='Conectado';iniciarAutoSync();
+  }catch(e){setSyncDot('err');addSyncLog('✗ '+e.message,'err');showAlert('sync-alert','Error: '+e.message,'a-err');$i('s-status-txt').textContent='Error';}
+}
+function buildPushPayload(){
+  return{
+    residentes:db.residentes,visitas:db.visitas,encomiendas:db.encomiendas,
+    bitacora:db.bitacora,usuarios:db.usuarios,turnos:db.turnos,
+    config:{condNombre:condos[activeCondo]?.condominio?.nombre||'',condRut:condos[activeCondo]?.condominio?.rut||'',adminEmail:db.admin?.email||'',lastPush:nowDT()}
+  };
+}
+async function syncPush(){
+  if(!db.syncUrl){showAlert('sync-alert','Configura la URL primero','a-war');return;}
+  setSyncDot('busy');addSyncLog('Subiendo datos...');
+  try{
+    await callScript({action:'pushAll',payload:buildPushPayload()});
+    db.lastSync=nowDT();saveDB();setSyncDot('ok');
+    addSyncLog('✓ Datos subidos','ok');showAlert('sync-alert','✓ Sincronizado','a-ok');
+    if($i('s-last-sync'))$i('s-last-sync').textContent='Sync: '+db.lastSync;
+  }catch(e){setSyncDot('err');addSyncLog('✗ '+e.message,'err');showAlert('sync-alert','Error: '+e.message,'a-err');}
+}
+async function syncPushSilent(){
+  if(!db?.syncUrl)return;
+  // No subir si no hay datos relevantes (evita borrar Sheets con condo recien creado)
+  const hasData=db.residentes.length||db.visitas.length||db.encomiendas.length||db.bitacora.length||db.usuarios.length;
+  if(!hasData)return;
+  try{callScript({action:'pushAll',payload:buildPushPayload()}).then(()=>{db.lastSync=nowDT();saveDB();setSyncDot('ok');}).catch(()=>setSyncDot('err'));}
+  catch(e){setSyncDot('err');}
+}
+function syncPull(){openModal('modal-confirm-pull');}
+function applyPullData(r,confirmMsg=true,fullPull=false){
+  if(r.residentes?.length){
+    db.residentes=r.residentes.map(row=>({
+      nombre:row['Nombre']||'',dpto:row['Depto']||'',
+      idTipo:row['Tipo ID']||'rut',idNum:row['Número ID']||row['RUT']||'',
+      tel:row['Teléfono']||'',email:row['Correo']||'',
+      rut:row['RUT']||row['Número ID']||'' // compatibilidad
+    }));
+  }
+  if(r.usuarios?.length){
+    db.usuarios=r.usuarios.map(row=>({
+      nombre:row['Nombre']||'',rut:row['RUT']||'',
+      rol:(row['Rol']||'guardia').toLowerCase().includes('admin')?'admin':
+          (row['Rol']||'').toLowerCase().includes('supervisor')?'supervisor':
+          (row['Rol']||'').toLowerCase().includes('comité')?'comite':'guardia',
+      tel:row['Teléfono']||'',email:row['Correo']||'',clave:row['Clave']||'1234',
+      debecambiar:row['Debe cambiar clave']==='Sí',activo:row['Activo']!=='No',
+      perms:{},id:row['ID']?+row['ID']:Date.now()+Math.random()
+    }));
+  }
+  if(r.visitas?.length&&(fullPull||!db.visitas.length)){db.visitas=r.visitas.map(row=>({nombre:row['Nombre']||'',rut:row['RUT']||'',dpto:row['Depto']||'',autoriza:row['Autoriza']||'',fechaHora:row['Fecha y Hora']||'',guardia:row['Actor']||'',obs:row['Observaciones']||'',observaciones:[],id:Date.now()+Math.random()}));}
+  if(r.encomiendas?.length&&(fullPull||!db.encomiendas.length)){db.encomiendas=r.encomiendas.map(row=>({nomDest:row['Destinatario']||'',rutDest:row['RUT Dest']||'',dptoDest:row['Depto']||'',nombreRep:row['Repartidor']||'',empresa:row['Empresa']||'',obs:row['Obs. Recepción']||'',fechaHora:row['Fecha Recepción']||'',guardia:row['Recibió']||'',entregada:row['Entregada']==='Sí',id:Date.now()+Math.random()}));}
+  if(r.bitacora?.length&&(fullPull||!db.bitacora.length)){db.bitacora=r.bitacora.map(row=>({dpto:row['Depto']||'',tipo:row['Tipo']||'',descripcion:row['Descripción']||'',prioridad:row['Prioridad']||'normal',estado:row['Estado']||'abierto',fechaHora:row['Fecha y Hora']||'',guardia:row['Guardia']||'',observaciones:[],id:Date.now()+Math.random()}));}
+  db.lastSync=nowDT();saveDB();
+  addSyncLog('✓ Datos bajados','ok');setSyncDot('ok');
+  renderRes();renderVis();renderEnc();renderBit();renderGrd();updateDash();
+  if(confirmMsg)showAlert('sync-alert','✓ Datos actualizados desde Sheets','a-ok');
+}
+async function confirmarPull(){
+  closeModal('modal-confirm-pull');
+  if(!db.syncUrl){showAlert('sync-alert','Sin URL configurada','a-war');return;}
+  addSyncLog('Subiendo locales...');
+  try{await syncPushSilent();}catch(e){}
+  setSyncDot('busy');addSyncLog('Bajando datos...');
+  try{const r=await callScript({action:'pullAll'});applyPullData(r);}
+  catch(e){setSyncDot('err');addSyncLog('✗ '+e.message,'err');showAlert('sync-alert','Error: '+e.message,'a-err');}
+}
+function iniciarAutoSync(){
+  if(syncTimer)clearInterval(syncTimer);
+  const min=parseInt(db.syncInterval||v('s-interval')||'0');
+  if(min>0)syncTimer=setInterval(()=>syncPushSilent(),min*60000);
+}
+
+// ================================================================
+// RESIDENTES
+// ================================================================
+function toggleIdTipo(){
+  const tipo=v('r-id-tipo');
+  $i('r-rut-wrap').classList.toggle('hidden',tipo!=='rut');
+  $i('r-doc-wrap').classList.toggle('hidden',tipo==='rut');
+}
+function getResId(r){return r.idNum||r.rut||'—';}
+function agregarRes(){
+  const nom=v('r-nom'),dpto=v('r-dpto'),tipo=v('r-id-tipo'),tel=v('r-tel'),email=v('r-email');
+  let idNum=tipo==='rut'?v('r-rut'):v('r-doc');
+  if(!nom||!dpto||!idNum){showAlert('r-alert','Complete nombre, depto y número de identificación','a-err');return;}
+  if(tipo==='rut'&&!validRut(idNum)){showAlert('r-alert','RUT inválido','a-err');return;}
+  if(db.residentes.find(r=>getResId(r)===idNum)){showAlert('r-alert','Ya existe con ese número de identificación. Usa importar para actualizar.','a-err');return;}
+  db.residentes.push({nombre:nom,dpto,idTipo:tipo,idNum,rut:tipo==='rut'?idNum:'',tel,email});
+  saveDB();['r-nom','r-rut','r-dpto','r-doc','r-tel','r-email'].forEach(i=>$i(i)&&($i(i).value=''));
+  showAlert('r-alert','✓ Residente registrado','a-ok');renderRes();loadDptosFiltro();
+  if(db.syncUrl)syncPushSilent().catch(()=>{});
+}
+function elimRes(idNum){if(!confirm('¿Eliminar residente?'))return;db.residentes=db.residentes.filter(r=>getResId(r)!==idNum);saveDB();renderRes();}
+function loadDptosFiltro(){
+  const dptos=[...new Set(db.residentes.map(r=>r.dpto))].sort();
+  $i('r-filtro-dpto').innerHTML='<option value="">Todos los deptos</option>'+dptos.map(d=>`<option value="${d}">${d}</option>`).join('');
+}
+function renderRes(){
+  const filtDpto=v('r-filtro-dpto'),buscar=v('r-buscar').toLowerCase();
+  let res=db.residentes;
+  if(filtDpto)res=res.filter(r=>r.dpto===filtDpto);
+  if(buscar)res=res.filter(r=>r.nombre.toLowerCase().includes(buscar));
+  $i('r-cnt').textContent=db.residentes.length;
+  const el=$i('r-lista');
+  if(!res.length){el.innerHTML='<div class="tsm tc" style="padding:1rem">Sin resultados</div>';return;}
+  const esAdmin=hasPerm('addRes');
+  // Ordenar por dpto luego nombre
+  res=[...res].sort((a,b)=>a.dpto.localeCompare(b.dpto)||a.nombre.localeCompare(b.nombre));
+  el.innerHTML=res.map(r=>`<div class="li">
+    <div class="av">${ini(r.nombre)}</div>
+    <div class="li-i">
+      <div class="li-n">${r.dpto} · ${r.nombre}</div>
+      <div class="li-s">${esAdmin?'ID: '+getResId(r)+' · ':''}${r.tel||''}${r.email?' · '+r.email:''}</div>
+    </div>
+    ${esAdmin?`<button class="btn btn-err btn-sm" onclick="elimRes('${getResId(r)}')">✕</button>`:''}
+  </div>`).join('');
+}
+function exportRes(){xlsS([['Depto','Nombre','Tipo ID','Número ID','Teléfono','Correo'],...db.residentes.map(r=>[r.dpto,r.nombre,r.idTipo||'rut',getResId(r),r.tel||'',r.email||''])],'Residentes','Residentes');}
+function plantillaRes(){xlsS([['Depto','Nombre','Tipo ID','Número ID','Teléfono','Correo'],['B-402','Juan Pérez González','rut','12.345.678-9','+56912345678','juan@email.com'],['B-402','María Smith','pasaporte','AB123456','+56987654321','maria@email.com']],'Residentes','Plantilla_Residentes');}
+function importRes(ev){
+  const file=ev.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const wb=XLSX.read(e.target.result,{type:'binary'});
+      const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1});
+      let added=0,updated=0,inv=0;
+      for(let i=1;i<rows.length;i++){
+        const [dpto,nom,tipo,idNum,tel,email]=rows[i];
+        if(!nom||!dpto||!idNum)continue;
+        const ids=String(idNum);
+        if(tipo==='rut'&&!validRut(ids)){inv++;continue;}
+        const ex=db.residentes.find(r=>getResId(r)===ids);
+        if(ex){ex.nombre=String(nom);ex.dpto=String(dpto);ex.idTipo=String(tipo||'rut');ex.idNum=ids;ex.tel=String(tel||'');ex.email=String(email||'');ex.rut=tipo==='rut'?ids:'';updated++;}
+        else{db.residentes.push({nombre:String(nom),dpto:String(dpto),idTipo:String(tipo||'rut'),idNum:ids,rut:tipo==='rut'?ids:'',tel:String(tel||''),email:String(email||'')});added++;}
+      }
+      saveDB();renderRes();loadDptosFiltro();alert(`✓ Nuevos: ${added} · Actualizados: ${updated} · Omitidos: ${inv}`);
+      if(db.syncUrl)syncPushSilent().catch(()=>{});
+    }catch(e){alert('Error: '+e.message);}
+    ev.target.value='';
+  };
+  reader.readAsBinaryString(file);
+}
+
+// ================================================================
+// VISITAS
+// ================================================================
+function loadDptosVis(){
+  const dptos=[...new Set(db.residentes.map(r=>r.dpto))].sort();
+  $i('v-dpto').innerHTML='<option value="">Seleccionar...</option>'+dptos.map(d=>`<option value="${d}">${d}</option>`).join('');
+  $i('v-aut').innerHTML='<option value="">Seleccionar...</option>';
+}
+function cargarAutDpto(){
+  const dpto=v('v-dpto');
+  $i('v-aut').innerHTML='<option value="">Seleccionar...</option>'+db.residentes.filter(r=>r.dpto===dpto).map(r=>`<option value="${r.nombre}">${r.nombre}</option>`).join('');
+  buscarVisitaAutorizada();
+}
+function autoFillVis(){
+  const id=v('v-rut');if(!id||id.length<4)return;
+  const hist=db.visitas.filter(x=>(x.rut||x.idNum||'')===id||x.nombre.toLowerCase().includes(id.toLowerCase()));
+  if(!hist.length)return;
+  const l=hist[hist.length-1];
+  $i('v-nom').value=l.nombre;
+  if(l.dpto){const sel=$i('v-dpto');for(let i=0;i<sel.options.length;i++)if(sel.options[i].value===l.dpto){sel.selectedIndex=i;cargarAutDpto();break;}}
+}
+function buscarVisitaAutorizada(){
+  const dpto=v('v-dpto');if(!dpto)return;
+  const hoy=new Date();
+  const autz=db.visitas.filter(x=>x.dpto===dpto&&x.hasta&&!x.usada);
+  const vigentes=autz.filter(x=>{const f=parseFecha(x.hasta);return f&&f>=hoy;});
+  const el=$i('visita-aut-prev');
+  if(vigentes.length){
+    el.innerHTML=vigentes.map(v=>`<div class="vauth-ok" style="margin-bottom:4px;font-size:0.77rem"><strong>✓ ${v.nombre}</strong> autorizado hasta ${v.hasta} (por ${v.autoriza||'—'})</div>`).join('');
+    el.classList.remove('hidden');
+  } else el.classList.add('hidden');
+}
+function verificarAut(){
+  const txt=v('chk-rut');const el=$i('chk-result');el.classList.remove('hidden');
+  if(!txt||txt.length<2){el.innerHTML='<div class="vauth-no">Ingresa número de ID o nombre</div>';return;}
+  const hoy=new Date();
+  let vis=db.visitas.filter(x=>x.hasta&&!x.usada);
+  vis=vis.filter(x=>(x.rut||x.idNum||'')===txt||x.nombre.toLowerCase().includes(txt.toLowerCase()));
+  const vig=vis.filter(x=>{const f=parseFecha(x.hasta);return f&&f>=hoy;});
+  el.innerHTML=vig.length?vig.map(x=>`<div class="vauth-ok" style="margin-bottom:4px"><strong>✓ ${x.nombre}</strong> — Dpto ${x.dpto}<br><span class="tsm">Autoriza: ${x.autoriza||'—'} · Válida hasta: ${x.hasta}</span></div>`).join(''):`<div class="vauth-no"><strong>✗ Sin autorización vigente</strong><br><span class="tsm">${vis.length?'Tuvo autorización pero venció o fue usada.':'Sin registros previos.'}</span></div>`;
+}
+$i('v-vigencia').addEventListener('change',function(){
+  $i('v-vigencia-custom').classList.toggle('hidden',this.value!=='custom');
+  const useDate=this.value==='0';
+  $i('v-hasta').closest('.fr')&&($i('v-hasta').parentElement.style.opacity=useDate?'1':'0.5');
+});
+function registrarVis(){
+  const nom=v('v-nom'),dpto=v('v-dpto'),idNum=v('v-rut'),idTipo=v('v-id-tipo');
+  if(!nom||!dpto){showAlert('v-alert','Complete nombre y depto','a-err');return;}
+  if(!idNum){showAlert('v-alert','Ingresa número de identificación','a-err');return;}
+  const actor=quienActua();
+  const vis={nombre:nom,dpto,rut:idTipo==='rut'?idNum:'',idTipo,idNum,autoriza:v('v-aut'),fechaHora:nowDT(),guardia:actor,obs:v('v-obs'),observaciones:[],usada:false,id:Date.now()};
+  if(togs.veh){vis.patente=v('v-pat');vis.estac=v('v-est');}
+  if(togs.aut){
+    vis.hasta=v('v-hasta');
+    const vigSel=v('v-vigencia');
+    if(vigSel!=='0'){
+      const hrs=vigSel==='custom'?parseInt(v('v-vigencia-hrs')):parseInt(vigSel);
+      const exp=new Date();exp.setHours(exp.getHours()+hrs);
+      const dd=pad(exp.getDate()),mm=pad(exp.getMonth()+1),yyyy=exp.getFullYear();
+      vis.hasta=`${dd}-${mm}-${yyyy}`;
+      vis.vigenciaHrs=hrs;
+      vis.expTimestamp=exp.getTime();
+      vis.soloUnIngreso=true;// solo un uso
+    }
+  }
+  db.visitas.push(vis);saveDB();
+  ['v-nom','v-pat','v-est','v-hasta','v-obs','v-rut'].forEach(i=>{if($i(i))$i(i).value='';});
+  $i('v-dpto').selectedIndex=0;$i('v-aut').innerHTML='<option value="">Seleccionar...</option>';
+  togs.veh=false;togs.aut=false;$i('tg-veh').classList.remove('on');$i('tg-aut').classList.remove('on');$i('cv').classList.add('hidden');$i('ca').classList.add('hidden');
+  showAlert('v-alert','✓ Visita registrada','a-ok');renderVis();
+  if(db.syncUrl)syncPushSilent().catch(()=>{});
+}
+function renderVis(){
+  $i('v-cnt').textContent=db.visitas.length;
+  const el=$i('v-lista');if(!db.visitas.length){el.innerHTML='<div class="tsm tc" style="padding:1rem">Sin visitas</div>';return;}
+  el.innerHTML=[...db.visitas].reverse().slice(0,50).map(vis=>`
+    <div class="li">
+      <div class="av" style="background:var(--tl);color:var(--teal)">${ini(vis.nombre)}</div>
+      <div class="li-i">
+        <div class="li-n">${vis.nombre} → Dpto ${vis.dpto}</div>
+        <div class="li-s">${vis.idNum||vis.rut||''} · ${vis.fechaHora||''}${vis.patente?' · 🚗 '+vis.patente+' Est.'+vis.estac:''}</div>
+        ${vis.autoriza?`<div class="li-s">Autoriza: ${vis.autoriza}</div>`:''}
+        ${vis.hasta?`<span class="badge bt" style="margin-top:2px">${vis.usada?'Usada':'✓ Aut. hasta '+vis.hasta}</span>`:''}
+        ${vis.obs?`<div class="obs-tag">📝 ${vis.obs}</div>`:''}
+        ${vis.observaciones?.length?`<div class="obs-box">${vis.observaciones.map(o=>`<div class="obs-item"><strong>${o.fechaHora} · ${o.autor}:</strong> ${o.texto}</div>`).join('')}</div>`:''}
+        <button class="btn btn-sec btn-sm" style="margin-top:4px" onclick="abrirObsVis(${vis.id})">+ Obs.</button>
+      </div>
+    </div>`).join('');
+}
+function abrirObsVis(id){visObs=id;const vis=db.visitas.find(x=>x.id===id);if(!vis)return;$i('obs-vis-ref').innerHTML=`<strong>${vis.nombre}</strong> · Dpto ${vis.dpto} · ${vis.fechaHora||''}`;$i('obs-vis-txt').value='';openModal('modal-obs-vis');}
+function guardarObsVis(){const txt=v('obs-vis-txt');if(!txt){showAlert('obs-vis-alert','Escribe la observación','a-err');return;}const vis=db.visitas.find(x=>x.id===visObs);if(!vis)return;if(!vis.observaciones)vis.observaciones=[];vis.observaciones.push({texto:txt,fechaHora:nowDT(),autor:cu?cu.nombre:'Sistema'});saveDB();closeModal('modal-obs-vis');renderVis();if(db.syncUrl)syncPushSilent().catch(()=>{});}
+function exportVis(){xlsS([['Nombre','ID','Tipo ID','Depto','Autoriza','FechaHora','Vehículo','Patente','Estac','Aut.hasta','Obs','Actor'],...db.visitas.map(x=>[x.nombre,x.idNum||x.rut||'',x.idTipo||'',x.dpto,x.autoriza||'',x.fechaHora||'',x.patente?'Sí':'No',x.patente||'',x.estac||'',x.hasta||'',x.obs||'',x.guardia||''])],'Visitas','Visitas');}
+
+// ================================================================
+// ENCOMIENDAS
+// ================================================================
+function loadDptosEnc(){const dptos=[...new Set(db.residentes.map(r=>r.dpto))].sort();$i('e-dpto-sel').innerHTML='<option value="">Seleccionar depto...</option>'+dptos.map(d=>`<option value="${d}">${d}</option>`).join('');}
+function buscarPorDpto(){const dpto=v('e-dpto-sel');$i('e-buscar-nom').value='';$i('e-nom-res').classList.add('hidden');if(!dpto){$i('e-dest-sel').classList.add('hidden');return;}$i('e-res-sel').innerHTML='<option value="">Seleccionar...</option>'+db.residentes.filter(r=>r.dpto===dpto).map(r=>`<option value="${getResId(r)}">${r.nombre}</option>`).join('');$i('e-dest-sel').classList.remove('hidden');$i('e-dest-info').classList.add('hidden');}
+function buscarPorNom(){const q=v('e-buscar-nom');const el=$i('e-nom-res');if(q.length<2){el.classList.add('hidden');return;}const found=db.residentes.filter(r=>r.nombre.toLowerCase().includes(q.toLowerCase()));el.innerHTML=found.length?found.map(r=>`<div class="search-item" onclick="selDestDir('${getResId(r)}')">${r.nombre} <span class="badge bb">Dpto ${r.dpto}</span></div>`).join(''):'<div class="search-item tsm">Sin resultados</div>';el.classList.remove('hidden');}
+function selDestDir(id){const r=db.residentes.find(x=>getResId(x)===id);if(!r)return;destSel=r;$i('e-nd').value=r.nombre;$i('e-dd').value=r.dpto;$i('e-nom-res').classList.add('hidden');$i('e-buscar-nom').value='';$i('e-dpto-sel').value='';$i('e-dest-sel').classList.add('hidden');mostrarDestInfo(r);}
+function selDest(){const id=v('e-res-sel');if(!id)return;const r=db.residentes.find(x=>getResId(x)===id);if(!r)return;destSel=r;$i('e-nd').value=r.nombre;$i('e-dd').value=r.dpto;mostrarDestInfo(r);}
+function mostrarDestInfo(r){const el=$i('e-dest-info');el.innerHTML=`<strong>${r.nombre}</strong> · Dpto ${r.dpto}${r.tel?'<br>📱 '+r.tel:''}${r.email?'<br>✉ '+r.email:''}`;el.classList.remove('hidden');}
+function buscarRep(){const id=v('e-rr');if(!id||id.length<4)return;const hist=db.encomiendas.filter(e=>e.rutRep===id||e.idRep===id);if(!hist.length)return;const l=hist[hist.length-1];$i('e-nr').value=l.nombreRep;const sel=$i('e-emp');let f=false;for(let i=0;i<sel.options.length;i++)if(sel.options[i].text===l.empresa||sel.options[i].value===l.empresa){sel.selectedIndex=i;f=true;break;}if(!f&&l.empresa){sel.value='Otra';$i('e-emp-otro').classList.remove('hidden');$i('e-emp-txt').value=l.empresa;}}
+function chkOtraEmp(){$i('e-emp-otro').classList.toggle('hidden',v('e-emp')!=='Otra');}
+function filtEnc(f){encFiltro=f;renderEnc();}
+function registrarEnc(){
+  if(!destSel){showAlert('e-alert','Busca y selecciona un destinatario','a-err');return;}
+  const nomR=v('e-nr');let empresa=v('e-emp');if(empresa==='Otra')empresa=v('e-emp-txt');
+  if(!nomR||!empresa){showAlert('e-alert','Complete datos del repartidor','a-err');return;}
+  const actor=quienActua();
+  const enc={rutDest:getResId(destSel),nomDest:destSel.nombre,dptoDest:destSel.dpto,telDest:destSel.tel||'',emailDest:destSel.email||'',idRep:v('e-rr'),rutRep:v('e-rr'),nombreRep:nomR,empresa,obs:v('e-obs'),fechaHora:nowDT(),guardia:actor,entregada:false,pin:null,id:Date.now()};
+  db.encomiendas.push(enc);saveDB();
+  ['e-nd','e-dd','e-rr','e-nr','e-obs','e-emp-txt'].forEach(i=>$i(i)&&($i(i).value=''));$i('e-emp').value='';$i('e-emp-otro').classList.add('hidden');$i('e-dpto-sel').selectedIndex=0;$i('e-dest-sel').classList.add('hidden');$i('e-dest-info').classList.add('hidden');destSel=null;
+  showAlert('e-alert','✓ Encomienda registrada','a-ok');renderEnc();
+  if(db.syncUrl)syncPushSilent().catch(()=>{});
+}
+function genPin(){return String(Math.floor(1000+Math.random()*9000));}
+function abrirNotif(id){
+  notifEncId=id;const enc=db.encomiendas.find(e=>e.id===id);if(!enc)return;
+  const pin=genPin();notifPin=pin;enc.pinHash=btoa(pin+'_igp_'+enc.id);saveDB();
+  $i('notif-info').innerHTML=`📦 <strong>${enc.nomDest}</strong> · Dpto ${enc.dptoDest} · ${enc.empresa}`;
+  $i('pin-display').textContent=pin;openModal('modal-notif');
+}
+function getMsgNotif(){const enc=db.encomiendas.find(e=>e.id===notifEncId);if(!enc)return{msg:'',tel:'',email:''};const msg=`Estimado/a ${enc.nomDest},\nTiene una encomienda de ${enc.empresa} esperando en conserjería.\nFecha de recepción: ${enc.fechaHora}\nPIN de retiro: ${notifPin}\n\nPreséntelo al guardia para retirar su encomienda.\n${condos[activeCondo]?.condominio?.nombre||'IGP Control'}`;return{msg,tel:enc.telDest||'',email:enc.emailDest||''};}
+function notifWA(){const{msg,tel}=getMsgNotif();if(!tel){alert('Sin teléfono registrado');return;}window.open(`https://wa.me/${tel.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank');}
+function notifEmail(){const{msg,email}=getMsgNotif();if(!email){alert('Sin correo registrado');return;}window.open(`mailto:${email}?subject=Encomienda en Conserjería - ${condos[activeCondo]?.condominio?.nombre||''}&body=${encodeURIComponent(msg)}`,'_blank');}
+function copiarMsg(){const{msg}=getMsgNotif();navigator.clipboard.writeText(msg).then(()=>alert('✓ Copiado')).catch(()=>alert('Cópialo manualmente'));}
+function abrirEntrega(id){
+  encEntregar=id;const enc=db.encomiendas.find(e=>e.id===id);if(!enc)return;
+  $i('ent-info').innerHTML=`📦 <strong>${enc.nomDest}</strong> · Dpto ${enc.dptoDest}<br><span class="tsm">${enc.empresa} · ${enc.fechaHora}</span>`;
+  $i('ent-rut').value='';$i('ent-nom').value='';$i('ent-pin').value='';$i('ent-obs').value='';$i('ent-adm-clave').value='';
+  $i('ent-no-reg').classList.add('hidden');$i('ent-pin-sec').classList.toggle('hidden',!enc.pinHash);
+  $i('ent-admin-bypass').classList.toggle('hidden',!hasPerm('encForzar'));
+  openModal('modal-entregar');
+}
+function autoFillRetiro(){
+  const id=v('ent-rut');if(!id||id.length<3)return;
+  const enc=db.encomiendas.find(e=>e.id===encEntregar);
+  // Buscar por ID exacto o aproximado
+  const r=db.residentes.find(x=>getResId(x)===id||(x.rut&&x.rut===id));
+  if(r){
+    $i('ent-nom').value=r.nombre;
+    // Es residente de la unidad?
+    $i('ent-no-reg').classList.toggle('hidden',r.dpto===enc?.dptoDest);
+  } else {
+    // No encontrado — permitir igual pero marcar aviso
+    $i('ent-no-reg').classList.remove('hidden');
+    $i('ent-nom').value='';
+  }
+}
+function confirmarEntrega(){
+  const id=v('ent-rut'),nom=v('ent-nom');
+  if(!id||!nom){showAlert('ent-alert','Complete ID y nombre','a-err');return;}
+  const enc=db.encomiendas.find(e=>e.id===encEntregar);if(!enc)return;
+  if(enc.pinHash){const pin=v('ent-pin');if(btoa(pin+'_igp_'+enc.id)!==enc.pinHash){showAlert('ent-alert','PIN incorrecto','a-err');return;}}
+  completarEntrega(enc,id,nom,v('ent-autoriza'),v('ent-obs'));
+}
+function forzarEntrega(){
+  const enc=db.encomiendas.find(e=>e.id===encEntregar);if(!enc)return;
+  const clave=v('ent-adm-clave');let ok=false;
+  if(db.admin?.clave===clave)ok=true;
+  if(!ok){const u=db.usuarios.find(x=>x.rut===cu.rut&&x.clave===clave);if(u&&hasPerm('encForzar'))ok=true;}
+  if(!ok){showAlert('ent-alert','Clave incorrecta','a-err');return;}
+  completarEntrega(enc,v('ent-rut')||'—',v('ent-nom')||'(Forzado)',v('ent-autoriza'),v('ent-obs')+'[FORZADO]');
+}
+function completarEntrega(enc,idR,nomR,autoriza,obs){
+  enc.entregada=true;enc.fechaEntrega=nowDT();enc.idRetiro=idR;enc.nomRetiro=nomR;
+  enc.autorizaRetiro=autoriza||'';enc.obsEntrega=obs;enc.guardiaEntrega=quienActua();enc.pinHash=null;
+  saveDB();closeModal('modal-entregar');renderEnc();updateDash();
+  if(db.syncUrl)syncPushSilent().catch(()=>{});
+}
+function renderEnc(){
+  const pend=db.encomiendas.filter(e=>!e.entregada);
+  $i('e-cnt').textContent=pend.length;
+  const el=$i('e-lista');
+  let items=db.encomiendas;
+  if(encFiltro==='pendientes')items=items.filter(e=>!e.entregada);
+  else if(encFiltro==='entregadas')items=items.filter(e=>e.entregada);
+  if(!items.length){el.innerHTML='<div class="tsm tc" style="padding:1rem">Sin encomiendas</div>';return;}
+  el.innerHTML=[...items].reverse().map(e=>`
+    <div class="li">
+      <div class="av" style="background:${e.entregada?'var(--gl)':'var(--ol)'};color:${e.entregada?'var(--green)':'var(--orange)'};font-size:0.9rem">📦</div>
+      <div class="li-i">
+        <div class="li-n">${e.nomDest} · Dpto ${e.dptoDest}</div>
+        <div class="li-s">${e.empresa} · ${e.nombreRep} · ${e.fechaHora}</div>
+        <div class="li-s">Recibió: ${e.guardia||'—'} ${e.pinHash?'<span class="badge bgold">PIN activo</span>':''}</div>
+        ${e.obs?`<div class="obs-tag">📝 ${e.obs}</div>`:''}
+        ${e.entregada?`<div class="li-s" style="margin-top:3px">✓ Retiró: <strong>${e.nomRetiro}</strong>${e.autorizaRetiro?' (Autoriza: '+e.autorizaRetiro+')':''} · ${e.fechaEntrega}</div>${e.obsEntrega?'<div class="obs-tag">📝 '+e.obsEntrega+'</div>':''}`:``}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0">
+        ${!e.entregada?`<button class="btn btn-ok btn-sm" onclick="abrirEntrega(${e.id})">Entregar</button>`:''}
+        <button class="btn btn-sec btn-sm" onclick="abrirNotif(${e.id})">📱 PIN</button>
+      </div>
+    </div>`).join('');
+}
+function exportEnc(){xlsS([['Destinatario','ID Dest','Depto','Repartidor','Empresa','Obs','FechaHora','Recibió','Entregada','Retiró','ID Retiro','Autoriza','Obs.Entrega','Fecha Entrega'],...db.encomiendas.map(e=>[e.nomDest,e.rutDest||'',e.dptoDest,e.nombreRep,e.empresa,e.obs||'',e.fechaHora||'',e.guardia||'',e.entregada?'Sí':'No',e.nomRetiro||'',e.idRetiro||'',e.autorizaRetiro||'',e.obsEntrega||'',e.fechaEntrega||''])],'Encomiendas','Encomiendas');}
+
+// ================================================================
+// GUARDIAS / USUARIOS
+// ================================================================
+$i('g-rol').addEventListener('change',function(){$i('g-perms-box').classList.toggle('hidden',this.value==='guardia');});
+$i('remp-quien').addEventListener('change',function(){$i('remp-otro-f').classList.toggle('hidden',this.value!=='otro');});
+
+function limpiarFormGrd(){$i('g-edit-id').value='';['g-nom','g-rut','g-clave','g-email','g-tel'].forEach(i=>$i(i).value='');$i('g-rol').value='guardia';$i('g-perms-box').classList.add('hidden');$i('g-rut-h').textContent='';$i('g-rut').disabled=false;}
+
+function cargarEdicionGrd(id){
+  const u=db.usuarios.find(x=>x.id===id);if(!u)return;
+  $i('g-edit-id').value=id;$i('g-nom').value=u.nombre;$i('g-rut').value=u.rut;$i('g-rut').disabled=true;
+  $i('g-email').value=u.email||'';$i('g-tel').value=u.tel||'';$i('g-rol').value=u.rol||'guardia';
+  $i('g-clave').value='';$i('g-clave').placeholder='(vacío = sin cambio)';
+  $i('g-perms-box').classList.toggle('hidden',u.rol==='guardia');
+  if(u.perms)['res','export','enc-forzar','bit','users','turnos','sync'].forEach(p=>{const el=$i('p-'+p);if(el)el.checked=u.perms[p]||false;});
+  $i('admin-grd').scrollIntoView({behavior:'smooth'});
+}
+
+function guardarGrd(){
+  const editId=v('g-edit-id');
+  const nom=v('g-nom'),rut=v('g-rut'),rol=v('g-rol');
+  if(!nom||!rut){showAlert('g-alert','Complete nombre y RUT','a-err');return;}
+  if(!validRut(rut)){showAlert('g-alert','RUT inválido','a-err');return;}
+  const debecambiar=$i('tg-debecambiar').classList.contains('on');
+  const perms={};if(rol!=='guardia'){['res','export','enc-forzar','bit','users','turnos','sync'].forEach(p=>{const el=$i('p-'+p);if(el)perms[p]=el.checked;});}
+
+  if(editId){
+    // EDITAR
+    const u=db.usuarios.find(x=>x.id===+editId);if(!u){showAlert('g-alert','Usuario no encontrado','a-err');return;}
+    u.nombre=nom;u.rol=rol;u.email=v('g-email');u.tel=v('g-tel');u.perms=perms;
+    const nc=v('g-clave');if(nc){u.clave=nc;if(debecambiar)u.debecambiar=true;}
+    saveDB();showAlert('g-alert','✓ Usuario actualizado','a-ok');
+  } else {
+    // CREAR
+    if(db.admin?.rut===rut||db.usuarios.find(x=>x.rut===rut)){showAlert('g-alert','Ya existe usuario con ese RUT','a-err');return;}
+    const clave=v('g-clave');if(!clave){showAlert('g-alert','Ingresa una clave inicial','a-err');return;}
+    db.usuarios.push({nombre:nom,rut,clave,rol,email:v('g-email'),tel:v('g-tel'),perms,activo:true,debecambiar,id:Date.now()});
+    saveDB();showAlert('g-alert','✓ Usuario creado','a-ok');
+  }
+  limpiarFormGrd();renderGrd();poblarGrdSel();
+  if(db.syncUrl)syncPushSilent().catch(()=>{});
+}
+function renderGrd(){
+  $i('g-cnt').textContent=db.usuarios.length;const el=$i('g-lista');
+  if(!db.usuarios.length){el.innerHTML='<div class="tsm tc" style="padding:1rem">Sin usuarios</div>';return;}
+  const rc={admin:'role-admin',supervisor:'role-supervisor',comite:'role-comite',guardia:'role-guardia'};
+  el.innerHTML=db.usuarios.map(g=>`<div class="li">
+    <div class="av" style="background:var(--pl);color:var(--purple)">${ini(g.nombre)}</div>
+    <div class="li-i"><div class="li-n">${g.nombre} <span class="role-badge ${rc[g.rol]||'role-guardia'}">${rolLabel(g.rol)}</span>${!g.activo?'<span class="badge br">Inactivo</span>':''}${g.debecambiar?'<span class="badge bo">Cambiar clave</span>':''}</div><div class="li-s">RUT: ${g.rut}${g.tel?' · '+g.tel:''}</div></div>
+    <div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0">
+      ${cu?.rol==='admin'?`<button class="btn btn-sec btn-sm" onclick="cargarEdicionGrd(${g.id})">Editar</button><button class="btn btn-out btn-sm" onclick="toggleGrd(${g.id})">${g.activo?'Desact.':'Activar'}</button>`:''}
+    </div>
+  </div>`).join('');
+}
+function toggleGrd(id){const g=db.usuarios.find(x=>x.id===id);if(!g)return;g.activo=!g.activo;saveDB();renderGrd();poblarGrdSel();}
+function asignarTurno(){
+  const uid=parseInt(v('t-g')),turno=v('t-t'),fecha=v('t-f');
+  if(!uid||!fecha){showAlert('t-alert','Selecciona usuario y fecha','a-err');return;}
+  db.turnos.push({id:Date.now(),usuarioId:uid,turno,fecha});saveDB();showAlert('t-alert','✓ Turno asignado','a-ok');renderTurnos();poblarTurnoSel();$i('t-g').selectedIndex=0;$i('t-f').value='';
+}
+function renderTurnos(){const el=$i('t-lista');if(!db.turnos.length){el.innerHTML='<div class="tsm tc" style="padding:1rem">Sin turnos</div>';return;}el.innerHTML=[...db.turnos].reverse().slice(0,12).map(t=>{const u=db.usuarios.find(x=>x.id===t.usuarioId);const act=db.turnoActivoId===t.id;return`<div class="li"><div class="av" style="background:${act?'var(--pl)':'var(--bl)'};color:${act?'var(--purple)':'var(--blue)'}">${act?'●':ini(u?.nombre||'?')}</div><div class="li-i"><div class="li-n">${u?.nombre||'?'} · ${t.turno==='dia'?'Día 07–19':'Noche 19–07'} ${act?'<span class="badge bp">ACTIVO</span>':''}</div><div class="li-s">${t.fecha}</div></div></div>`;}).join('');}
+function poblarGrdSel(){const ac=db.usuarios.filter(g=>g.activo);const o='<option value="">Seleccionar...</option>'+ac.map(g=>`<option value="${g.id}">${g.nombre} (${rolLabel(g.rol)})</option>`).join('');$i('t-g').innerHTML=o;}
+function poblarTurnoSel(){const sel=$i('sel-turno');sel.innerHTML='<option value="">Sin turno activo</option>'+db.turnos.map(t=>{const u=db.usuarios.find(x=>x.id===t.usuarioId);return`<option value="${t.id}">${u?.nombre||'?'} · ${t.turno==='dia'?'Día':'Noche'} · ${t.fecha}</option>`;}).join('');if(db.turnoActivoId)sel.value=db.turnoActivoId;updateTurnoInfo();}
+function setTurnoActivo(){const val=v('sel-turno');db.turnoActivoId=val?parseInt(val):null;saveDB();updateTurnoUI();updateTurnoInfo();}
+function updateTurnoInfo(){const el=$i('turno-info');if(!db.turnoActivoId){el.textContent='Sin turno activo';return;}const t=db.turnos.find(x=>x.id===db.turnoActivoId);if(!t){el.textContent='Sin turno activo';return;}const u=db.usuarios.find(x=>x.id===t.usuarioId);el.innerHTML=`<strong>${u?.nombre||'?'}</strong> · ${t.turno==='dia'?'Día 07:00–19:00':'Noche 19:00–07:00'} · ${t.fecha}`;}
+function getTurnoNom(){if(cu)return cu.nombre;if(!db.turnoActivoId)return 'Sin guardia';const t=db.turnos.find(x=>x.id===db.turnoActivoId);if(!t)return 'Sin guardia';return db.usuarios.find(x=>x.id===t.usuarioId)?.nombre||'Sin guardia';}
+function updateTurnoUI(){let nom=getTurnoNom();if(db.remplazTemp?.activo)nom=db.remplazTemp.nombre+'(R)';$i('grd-name').textContent=nom.split(' ')[0]||'—';}
+
+function activarRemp(){const quien=v('remp-quien');if(!quien){alert('Selecciona quién reemplaza');return;}let nombre=quien==='otro'?v('remp-otro-txt'):quien==='aseo'?'Personal de Aseo':quien==='admin'?'Administración':quien;if(!nombre){alert('Especifica el nombre');return;}db.remplazTemp={activo:true,nombre,motivo:v('remp-motivo'),dur:parseInt(v('remp-dur')),inicio:nowDT(),id:Date.now()};saveDB();actualizarRempUI();}
+function finalizarRemp(){if(!db.remplazTemp?.activo){alert('Sin reemplazo activo');return;}db.remplazTemp.activo=false;db.remplazTemp.fin=nowDT();saveDB();actualizarRempUI();}
+function actualizarRempUI(){const el=$i('remp-info'),banner=$i('remp-banner');if(db.remplazTemp?.activo){el.textContent=`Reemplazante: ${db.remplazTemp.nombre} (${db.remplazTemp.motivo}) desde ${db.remplazTemp.inicio}`;el.style.color='var(--orange)';if(banner){banner.textContent=`⚠ Reemplazo activo: ${db.remplazTemp.nombre}`;banner.classList.remove('hidden');}}else{el.textContent='Sin reemplazo activo';el.style.color='var(--gray)';if(banner)banner.classList.add('hidden');}updateTurnoUI();}
+setInterval(()=>{if(!db)return;if(db.remplazTemp?.activo&&db.remplazTemp.dur>0){const diff=(Date.now()-db.remplazTemp.id)/60000;if(diff>=db.remplazTemp.dur){db.remplazTemp.activo=false;db.remplazTemp.fin=nowDT();saveDB();actualizarRempUI();}}},60000);
+
+// ================================================================
+// BITACORA
+// ================================================================
+function loadDptosBit(){const dptos=[...new Set(db.residentes.map(r=>r.dpto))].sort();$i('b-dpto').innerHTML='<option value="">Seleccionar...</option><option value="area_comun">Área Común</option><option value="estacionamiento">Estacionamiento</option><option value="ascensor">Ascensor</option>'+dptos.map(d=>`<option value="${d}">${d}</option>`).join('');}
+function crearReporte(){const dpto=v('b-dpto'),desc=v('b-desc');if(!dpto||!desc){showAlert('b-alert','Completa depto y descripción','a-err');return;}db.bitacora.push({id:Date.now(),dpto,tipo:v('b-tipo'),descripcion:desc,prioridad:v('b-prio'),estado:'abierto',fechaHora:nowDT(),guardia:quienActua(),observaciones:[]});saveDB();$i('b-dpto').selectedIndex=0;$i('b-desc').value='';showAlert('b-alert','✓ Reporte registrado','a-ok');renderBit();if(db.syncUrl)syncPushSilent().catch(()=>{});}
+function filtBit(f){bitFiltro=f;renderBit();}
+function renderBit(){let items=db.bitacora;if(bitFiltro!=='todos')items=items.filter(b=>b.estado===bitFiltro);$i('b-cnt').textContent=db.bitacora.filter(b=>b.estado==='abierto').length;const el=$i('b-lista');if(!items.length){el.innerHTML='<div class="tsm tc" style="padding:1rem">Sin reportes</div>';return;}const eb={abierto:'<span class="badge br">Abierto</span>',en_proceso:'<span class="badge bo">En Proceso</span>',cerrado:'<span class="badge bg">Cerrado</span>'};el.innerHTML=[...items].reverse().map(b=>`<div class="li" style="align-items:flex-start"><div class="av" style="background:var(--rl);color:var(--red);font-size:0.7rem">📋</div><div class="li-i"><div class="li-n" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">Dpto ${b.dpto} · ${b.tipo} ${eb[b.estado]||''} ${b.prioridad==='urgente'?'<span class="badge br">⚡</span>':''}</div><div class="li-s">${b.fechaHora||''} · ${b.guardia}</div><div style="margin-top:3px;font-size:0.79rem">${b.descripcion}</div>${b.observaciones?.length?`<div class="obs-box" style="margin-top:4px">${b.observaciones.map(o=>`<div class="obs-item"><strong>${o.fechaHora} · ${o.autor}:</strong> ${o.texto}${o.cambioEstado?' → <span class="badge bb">'+o.cambioEstado+'</span>':''}</div>`).join('')}</div>`:''}<button class="btn btn-sec btn-sm" style="margin-top:4px" onclick="abrirObsBit(${b.id})">+ Observación</button></div></div>`).join('');}
+function abrirObsBit(id){bitObs=id;const b=db.bitacora.find(x=>x.id===id);if(!b)return;$i('obs-bit-ref').innerHTML=`<strong>Dpto ${b.dpto}</strong> · ${b.tipo} · ${b.fechaHora||''}`;$i('obs-bit-txt').value='';$i('obs-bit-est').value='';openModal('modal-obs-bit');}
+function guardarObsBit(){const txt=v('obs-bit-txt');if(!txt){showAlert('obs-bit-alert','Escribe la observación','a-err');return;}const b=db.bitacora.find(x=>x.id===bitObs);if(!b)return;if(!b.observaciones)b.observaciones=[];const est=v('obs-bit-est');b.observaciones.push({texto:txt,fechaHora:nowDT(),autor:cu?cu.nombre:'Sistema',cambioEstado:est||null});if(est)b.estado=est;saveDB();closeModal('modal-obs-bit');renderBit();if(db.syncUrl)syncPushSilent().catch(()=>{});}
+function exportBit(){xlsS([['Depto','Tipo','Descripción','Prioridad','Estado','FechaHora','Guardia','Observaciones'],...db.bitacora.map(b=>[b.dpto,b.tipo,b.descripcion,b.prioridad,b.estado,b.fechaHora||'',b.guardia,(b.observaciones||[]).map(o=>`[${o.fechaHora} ${o.autor}]: ${o.texto}`).join(' | ')])],'Bitácora','Bitacora');}
+
+// ================================================================
+// ADMIN
+// ================================================================
+function poblarRstUsr(){const u=[{rut:db.admin?.rut,label:(db.admin?.nombre||'?')+' (Admin)'},...db.usuarios.map(g=>({rut:g.rut,label:g.nombre+' ('+rolLabel(g.rol)+')'}))];$i('rst-usr').innerHTML=u.map(x=>`<option value="${x.rut}">${x.label}</option>`).join('');}
+function resetClave(){
+  const rut=v('rst-usr'),clave=v('rst-clave');if(!clave){showAlert('rst-alert','Ingresa nueva clave','a-err');return;}
+  const forzar=$i('tg-rst-forzar').classList.contains('on');
+  if(rut===db.admin?.rut){db.admin.clave=clave;db.admin.debecambiar=forzar;}
+  else{const g=db.usuarios.find(x=>x.rut===rut);if(g){g.clave=clave;g.debecambiar=forzar;}}
+  saveDB();showAlert('rst-alert','✓ Clave restablecida','a-ok');$i('rst-clave').value='';
+  if(db.syncUrl)syncPushSilent().catch(()=>{});
+}
+function saveAdminCfg(){
+  if(db.admin){db.admin.email=v('adm-email');}
+  db.syncUrl=v('s-url');db.syncInterval=parseInt(v('s-interval')||'0');
+  saveDB();iniciarAutoSync();alert('✓ Configuración guardada');
+}
+function resetAll(){
+  if(activeCondo!==null){condos[activeCondo].db=emptyDB();db=condos[activeCondo].db;saveCondos();}
+  location.reload();
+}
+function vaciarRegistros(){
+  const dias=parseInt(v('vaciar-dias'));
+  const confirm_msg=dias===0?'¿Vaciar TODOS los registros? (Asegúrate de haber exportado el respaldo)':'¿Vaciar registros de más de '+dias+' días? (Asegúrate de haber exportado el respaldo)';
+  if(!confirm(confirm_msg))return;
+  const ahora=Date.now();
+  const msLimite=dias===0?ahora:ahora-(dias*24*60*60*1000);
+  // Parsear timestamp desde fechaHora DD-MM-AAAA HH:MM
+  function fhToMs(fh){
+    if(!fh)return 0;
+    try{const[date,time]=fh.split(' ');const[d,m,y]=date.split('-');const[h,min]=(time||'00:00').split(':');return new Date(+y,+m-1,+d,+h,+min).getTime();}catch(e){return 0;}
+  }
+  db.visitas=db.visitas.filter(x=>dias===0?false:fhToMs(x.fechaHora)>=msLimite);
+  db.encomiendas=db.encomiendas.filter(x=>dias===0?false:fhToMs(x.fechaHora)>=msLimite);
+  db.bitacora=db.bitacora.filter(x=>dias===0?false:fhToMs(x.fechaHora)>=msLimite||(x.estado!=='cerrado'));
+  saveDB();renderVis();renderEnc();renderBit();updateDash();
+  alert('✓ Vaciado completado. Los datos se conservan en Google Sheets.');
+}
+function exportCompleto(){
+  const wb=XLSX.utils.book_new();
+  function addS(d,n){XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(d),n);}
+  addS([['Depto','Nombre','Tipo ID','Número ID','Teléfono','Correo'],...db.residentes.map(r=>[r.dpto,r.nombre,r.idTipo||'rut',getResId(r),r.tel||'',r.email||''])],'Residentes');
+  addS([['Nombre','ID','Tipo ID','Depto','Autoriza','FechaHora','Vehículo','Patente','Estac','Aut.hasta','Obs','Actor'],...db.visitas.map(x=>[x.nombre,x.idNum||x.rut||'',x.idTipo||'',x.dpto,x.autoriza||'',x.fechaHora||'',x.patente?'Sí':'No',x.patente||'',x.estac||'',x.hasta||'',x.obs||'',x.guardia||''])],'Visitas');
+  addS([['Destinatario','ID Dest','Depto','Repartidor','Empresa','Obs','FechaHora','Recibió','Entregada','Retiró','ID Retiro','Autoriza','Obs Entrega','Fecha Entrega'],...db.encomiendas.map(e=>[e.nomDest,e.rutDest||'',e.dptoDest,e.nombreRep,e.empresa,e.obs||'',e.fechaHora||'',e.guardia||'',e.entregada?'Sí':'No',e.nomRetiro||'',e.idRetiro||'',e.autorizaRetiro||'',e.obsEntrega||'',e.fechaEntrega||''])],'Encomiendas');
+  addS([['Depto','Tipo','Descripción','Prioridad','Estado','FechaHora','Guardia','Observaciones'],...db.bitacora.map(b=>[b.dpto,b.tipo,b.descripcion,b.prioridad,b.estado,b.fechaHora||'',b.guardia,(b.observaciones||[]).map(o=>`[${o.fechaHora} ${o.autor}]: ${o.texto}`).join(' | ')])],'Bitácora');
+  addS([['Nombre','RUT','Rol','Tel','Activo'],...db.usuarios.map(g=>[g.nombre,g.rut,rolLabel(g.rol),g.tel||'',g.activo?'Sí':'No'])],'Usuarios');
+  addS([['Usuario','Turno','Fecha'],...db.turnos.map(t=>{const u=db.usuarios.find(x=>x.id===t.usuarioId);return[u?.nombre||'?',t.turno==='dia'?'Día 07-19':'Noche 19-07',t.fecha];})],'Turnos');
+  XLSX.writeFile(wb,`IGPControl_${condos[activeCondo]?.condominio?.nombre||'export'}_${todayStr()}.xlsx`);
+}
+
+// ================================================================
+// DASHBOARD
+// ================================================================
+function updateDash(){
+  if(!db)return;
+  $i('st-r').textContent=db.residentes.length;
+  const h=todayStr().slice(0,5);
+  $i('st-v').textContent=db.visitas.filter(x=>(x.fechaHora||'').startsWith(h)).length;
+  $i('st-e').textContent=db.encomiendas.filter(e=>!e.entregada).length;
+  $i('st-b').textContent=db.bitacora.filter(b=>b.estado==='abierto').length;
+  updateTurnoUI();actualizarRempUI();
+  const dg=$i('dash-grd');
+  if(db.turnoActivoId){const t=db.turnos.find(x=>x.id===db.turnoActivoId);const u=t?db.usuarios.find(x=>x.id===t.usuarioId):null;let html=u?`<div class="li"><div class="av" style="background:var(--pl);color:var(--purple)">${ini(u.nombre)}</div><div class="li-i"><div class="li-n">${u.nombre}</div><div class="li-s">${t.turno==='dia'?'Día 07:00–19:00':'Noche 19:00–07:00'} · ${t.fecha}</div></div></div>`:'';if(db.remplazTemp?.activo)html+=`<div class="li"><div class="av" style="background:var(--ol);color:var(--orange)">⇄</div><div class="li-i"><div class="li-n">${db.remplazTemp.nombre} (Reemplazo)</div><div class="li-s">${db.remplazTemp.motivo}</div></div></div>`;dg.innerHTML=html||'<div class="tsm tc">Sin turno activo</div>';}else dg.innerHTML='<div class="tsm tc" style="padding:0.4rem">Sin turno activo</div>';
+  const rv=[...db.visitas].reverse().slice(0,3);$i('dash-vis').innerHTML=rv.length?rv.map(x=>`<div class="li"><div class="av" style="background:var(--tl);color:var(--teal);font-size:0.67rem">${ini(x.nombre)}</div><div class="li-i"><div class="li-n">${x.nombre}</div><div class="li-s">Dpto ${x.dpto} · ${x.fechaHora||''}</div></div></div>`).join(''):'<div class="tsm tc" style="padding:0.4rem">Sin visitas</div>';
+  const pe=db.encomiendas.filter(e=>!e.entregada).slice(0,3);$i('dash-enc').innerHTML=pe.length?pe.map(e=>`<div class="li"><div class="av" style="background:var(--ol);color:var(--orange);font-size:0.88rem">📦</div><div class="li-i"><div class="li-n">${e.nomDest}</div><div class="li-s">Dpto ${e.dptoDest} · ${e.empresa}</div></div><span class="badge bo">Pendiente</span></div>`).join(''):'<div class="tsm tc" style="padding:0.4rem">Sin pendientes</div>';
+}
+
+// ================================================================
+// EXCEL HELPER
+// ================================================================
+function xlsS(data,sheet,filename){const ws=XLSX.utils.aoa_to_sheet(data);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,sheet);XLSX.writeFile(wb,`${filename}_${condos[activeCondo]?.condominio?.nombre||'IGP'}_${todayStr()}.xlsx`);}
+
+// ================================================================
+// SETUP STATE
+// ================================================================
+let sUsuarios=[], sResidentes=[], sVisitas=[], sEncomiendas=[], sBitacora=[];
+
+function sTab(n){
+  for(let i=0;i<5;i++){
+    const p=$i('sp-'+i); if(p)p.classList.toggle('hidden',i!==n);
+    const b=$i('stab-'+i);
+    if(b){b.style.background=i===n?'var(--blue)':'var(--grl)';b.style.color=i===n?'white':'var(--gray)';}
+  }
+}
+
+// ---- USUARIOS ----
+function addUsrSetup(){
+  const nom=v('nu-nom'),rut=v('nu-rut'),rol=v('nu-rol'),tel=v('nu-tel'),clave=v('nu-clave');
+  if(!nom||!rut){alert('Nombre y RUT obligatorios');return;}
+  if(!validRut(rut)){alert('RUT invalido');return;}
+  if(sUsuarios.find(u=>u.rut===rut)){alert('Ya existe con ese RUT');return;}
+  sUsuarios.push({nombre:nom,rut,rol,tel,email:'',clave:clave||'1234',debecambiar:true,activo:true,perms:{},id:Date.now()+sUsuarios.length});
+  renderSUsrList();
+  ['nu-nom','nu-rut','nu-tel','nu-clave'].forEach(id=>{const el=$i(id);if(el)el.value='';});
+}
+function renderSUsrList(){
+  const el=$i('s-usr-list');if(!el)return;
+  if(!sUsuarios.length){el.innerHTML='';return;}
+  el.innerHTML=sUsuarios.map((u,i)=>`<div class="li"><div class="av" style="background:var(--pl);color:var(--purple)">${ini(u.nombre)}</div><div class="li-i"><div class="li-n">${u.nombre}</div><div class="li-s">${u.rut} - ${rolLabel(u.rol)}</div></div><button class="btn btn-err btn-sm" onclick="sUsuarios.splice(${i},1);renderSUsrList()">X</button></div>`).join('');
+}
+function importUsrS(ev){
+  const file=ev.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const wb=XLSX.read(e.target.result,{type:'binary'});
+      const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1});
+      let ok=0;
+      for(let i=1;i<rows.length;i++){
+        const [nom,rut,rol,tel,email,clave,forzar]=rows[i];
+        if(!nom||!rut)continue; const rs=String(rut).trim();
+        if(!validRut(rs))continue;
+        if(sUsuarios.find(u=>u.rut===rs))continue;
+        const rolN=String(rol||'guardia').toLowerCase();
+        sUsuarios.push({nombre:String(nom),rut:rs,rol:rolN.includes('super')?'supervisor':rolN.includes('comit')?'comite':'guardia',
+          tel:String(tel||''),email:String(email||''),clave:String(clave||'1234'),
+          debecambiar:String(forzar||'Si').toLowerCase().startsWith('s'),activo:true,perms:{},id:Date.now()+i});
+        ok++;
+      }
+      renderSUsrList(); alert('Usuarios importados: '+ok);
+    }catch(e2){alert('Error: '+e2.message);}
+    ev.target.value='';
+  };
+  reader.readAsBinaryString(file);
+}
+function dlPlantillaUsr(){
+  const d=[['Nombre Completo','RUT','Rol','Telefono','Correo','Clave Inicial','Cambiar clave (Si/No)'],
+    ['Juan Perez','15.234.567-8','guardia','+56912345678','juan@email.com','Guard2024','Si'],
+    ['Maria Lopez','16.789.012-3','supervisor','+56923456789','maria@email.com','Super2024','Si']];
+  const ws=XLSX.utils.aoa_to_sheet(d);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Usuarios');
+  XLSX.writeFile(wb,'Plantilla_Usuarios_IGP.xlsx');
+}
+
+// ---- RESIDENTES ----
+function addResSetup(){
+  const dpto=v('nr-dpto'),nom=v('nr-nom'),tipo=v('nr-tipo'),idNum=v('nr-id'),tel=v('nr-tel'),email=v('nr-email');
+  if(!dpto||!nom||!idNum){alert('Depto, nombre e ID obligatorios');return;}
+  if(tipo==='rut'&&!validRut(idNum)){alert('RUT invalido');return;}
+  sResidentes.push({dpto,nombre:nom,idTipo:tipo,idNum,rut:tipo==='rut'?idNum:'',tel,email});
+  updateSResCount();
+  ['nr-dpto','nr-nom','nr-id','nr-tel','nr-email'].forEach(id=>{const el=$i(id);if(el)el.value='';});
+}
+function updateSResCount(){
+  const el=$i('s-res-count');if(!el)return;
+  if(!sResidentes.length){el.classList.add('hidden');return;}
+  el.textContent=sResidentes.length+' residente(s) listos'; el.classList.remove('hidden');
+}
+function importResS(ev){
+  const file=ev.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const wb=XLSX.read(e.target.result,{type:'binary'});
+      const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1});
+      let ok=0;
+      for(let i=1;i<rows.length;i++){
+        const [dpto,nom,tipo,idNum,tel,email]=rows[i];
+        if(!dpto||!nom||!idNum)continue; const ids=String(idNum).trim();
+        const tipoS=String(tipo||'rut').toLowerCase();
+        if(tipoS==='rut'&&!validRut(ids))continue;
+        sResidentes.push({dpto:String(dpto).toUpperCase(),nombre:String(nom),idTipo:tipoS,idNum:ids,rut:tipoS==='rut'?ids:'',tel:String(tel||''),email:String(email||'')});
+        ok++;
+      }
+      updateSResCount(); alert('Residentes importados: '+ok);
+    }catch(e2){alert('Error: '+e2.message);}
+    ev.target.value='';
+  };
+  reader.readAsBinaryString(file);
+}
+function dlPlantillaRes(){
+  const d=[['Depto','Nombre Completo','Tipo ID','Numero ID','Telefono','Correo'],
+    ['A-101','Roberto Martinez','rut','12.345.678-9','+56912345678','roberto@email.com'],
+    ['B-202','John Smith','pasaporte','AB1234567','+56934567890','john@email.com']];
+  const ws=XLSX.utils.aoa_to_sheet(d);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Residentes');
+  XLSX.writeFile(wb,'Plantilla_Residentes_IGP.xlsx');
+}
+
+// ---- VISITAS ----
+function importVisS(ev){
+  const file=ev.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const wb=XLSX.read(e.target.result,{type:'binary'});
+      const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1});
+      let ok=0;
+      for(let i=1;i<rows.length;i++){
+        const [nom,idNum,idTipo,dpto,autoriza,fechaHora,vehiculo,patente,estac,hasta,obs,guardia]=rows[i];
+        if(!nom||!dpto)continue;
+        const vis={nombre:String(nom),idNum:String(idNum||''),rut:String(idTipo||'rut')==='rut'?String(idNum||''):'',
+          idTipo:String(idTipo||'rut'),dpto:String(dpto),autoriza:String(autoriza||''),
+          fechaHora:String(fechaHora||''),guardia:String(guardia||''),obs:String(obs||''),
+          observaciones:[],usada:false,id:Date.now()+i};
+        if(String(vehiculo||'').toLowerCase()==='si'){vis.patente=String(patente||'');vis.estac=String(estac||'');}
+        if(hasta)vis.hasta=String(hasta);
+        sVisitas.push(vis); ok++;
+      }
+      const el=$i('s-vis-count');if(el)el.textContent=sVisitas.length+' visita(s) listas';
+      alert('Visitas importadas: '+ok);
+    }catch(e2){alert('Error: '+e2.message);}
+    ev.target.value='';
+  };
+  reader.readAsBinaryString(file);
+}
+function dlPlantillaVis(){
+  const d=[['Nombre','Numero ID','Tipo ID','Depto','Autoriza','Fecha y Hora','Vehiculo (Si/No)','Patente','Estac','Aut.hasta','Observaciones','Guardia'],
+    ['Juan Perez','12.345.678-9','rut','B-402','Maria Lopez','15-01-2025 10:30','No','','','','','Juan Guardia']];
+  const ws=XLSX.utils.aoa_to_sheet(d);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Visitas');
+  XLSX.writeFile(wb,'Plantilla_Visitas_IGP.xlsx');
+}
+
+// ---- ENCOMIENDAS ----
+function importEncS(ev){
+  const file=ev.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const wb=XLSX.read(e.target.result,{type:'binary'});
+      const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1});
+      let ok=0;
+      for(let i=1;i<rows.length;i++){
+        const [nomDest,idDest,dpto,rep,empresa,obs,fechaHora,guardia,entregada,nomRetiro,idRetiro,obsEntrega,fechaEntrega]=rows[i];
+        if(!nomDest||!dpto)continue;
+        const enc={nomDest:String(nomDest),rutDest:String(idDest||''),dptoDest:String(dpto),
+          nombreRep:String(rep||''),empresa:String(empresa||''),obs:String(obs||''),
+          fechaHora:String(fechaHora||''),guardia:String(guardia||''),
+          entregada:String(entregada||'').toLowerCase()==='si',
+          nomRetiro:String(nomRetiro||''),idRetiro:String(idRetiro||''),
+          obsEntrega:String(obsEntrega||''),fechaEntrega:String(fechaEntrega||''),
+          pinHash:null,id:Date.now()+i};
+        sEncomiendas.push(enc); ok++;
+      }
+      const el=$i('s-enc-count');if(el)el.textContent=sEncomiendas.length+' encomienda(s) listas';
+      alert('Encomiendas importadas: '+ok);
+    }catch(e2){alert('Error: '+e2.message);}
+    ev.target.value='';
+  };
+  reader.readAsBinaryString(file);
+}
+function dlPlantillaEnc(){
+  const d=[['Destinatario','ID Dest','Depto','Repartidor','Empresa','Obs','Fecha Recepcion','Guardia','Entregada (Si/No)','Quien Retiro','ID Retiro','Obs Entrega','Fecha Entrega'],
+    ['Maria Lopez','12.345.678-9','B-402','Pedro Repartidor','Chilexpress','Fragil','15-01-2025 09:00','Juan Guardia','No','','','','']];
+  const ws=XLSX.utils.aoa_to_sheet(d);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Encomiendas');
+  XLSX.writeFile(wb,'Plantilla_Encomiendas_IGP.xlsx');
+}
+
+// ---- BITACORA ----
+function importBitS(ev){
+  const file=ev.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const wb=XLSX.read(e.target.result,{type:'binary'});
+      const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1});
+      let ok=0;
+      for(let i=1;i<rows.length;i++){
+        const [dpto,tipo,desc,prioridad,estado,fechaHora,guardia]=rows[i];
+        if(!dpto||!desc)continue;
+        sBitacora.push({dpto:String(dpto),tipo:String(tipo||'reclamo'),descripcion:String(desc),
+          prioridad:String(prioridad||'normal'),estado:String(estado||'abierto'),
+          fechaHora:String(fechaHora||''),guardia:String(guardia||''),observaciones:[],id:Date.now()+i});
+        ok++;
+      }
+      const el=$i('s-bit-count');if(el)el.textContent=sBitacora.length+' reporte(s) listo(s)';
+      alert('Reportes importados: '+ok);
+    }catch(e2){alert('Error: '+e2.message);}
+    ev.target.value='';
+  };
+  reader.readAsBinaryString(file);
+}
+function dlPlantillaBit(){
+  const d=[['Depto','Tipo','Descripcion','Prioridad','Estado','Fecha y Hora','Guardia'],
+    ['B-402','reclamo','Ruidos en el pasillo','normal','abierto','15-01-2025 22:00','Juan Guardia'],
+    ['A-101','dano','Ventana rota area comun','urgente','cerrado','10-01-2025 14:00','Pedro Guardia']];
+  const ws=XLSX.utils.aoa_to_sheet(d);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Bitacora');
+  XLSX.writeFile(wb,'Plantilla_Bitacora_IGP.xlsx');
+}
+
+// ================================================================
+// INIT
+// ================================================================
+// Check URL key param
+const urlParams=new URLSearchParams(window.location.search);
+const urlKey=urlParams.get('key');
+if(urlKey){
+  const stored=localStorage.getItem(ACCESS_KEY_STORAGE)||DEFAULT_GATE_KEY;
+  if(urlKey===stored){$i('key-gate').classList.add('hidden');loadCondos();mostrarSelector();}
+  // else show gate
+}
+// else show gate normally
+</script>
+</body>
+</html>
