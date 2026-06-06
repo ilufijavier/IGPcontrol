@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IGP Control v2.1</title>
+<title>IGP Control v2.2</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -146,7 +146,7 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
 <div class="overlay ov-bg" id="key-gate">
   <div class="ov-logo">
     <svg width="56" height="56" viewBox="0 0 64 64"><path d="M32 8L14 18L14 38C14 50 32 58 32 58C32 58 50 50 50 38L50 18Z" fill="none" stroke="white" stroke-width="3" stroke-linejoin="round"/><path d="M32 14L19 21L19 37C19 46 32 53 32 53C32 53 45 46 45 37L45 21Z" fill="rgba(255,255,255,0.22)"/><path d="M24 32L30 38L42 26" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-    <div><div style="font-size:1.5rem;font-weight:900">IGP Control v2.1</div></div>
+    <div><div style="font-size:1.5rem;font-weight:900">IGP Control v2.2</div></div>
   </div>
   <div class="ov-card">
     <h2>Clave de Acceso</h2>
@@ -160,7 +160,7 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
 <div class="overlay ov-bg hidden" id="condo-selector">
   <div class="ov-logo">
     <svg width="52" height="52" viewBox="0 0 64 64"><path d="M32 8L14 18L14 38C14 50 32 58 32 58C32 58 50 50 50 38L50 18Z" fill="none" stroke="white" stroke-width="3" stroke-linejoin="round"/><path d="M32 14L19 21L19 37C19 46 32 53 32 53C32 53 45 46 45 37L45 21Z" fill="rgba(255,255,255,0.2)"/><path d="M24 32L30 38L42 26" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-    <div><div style="font-size:1.4rem;font-weight:900">IGP Control v2.1</div><div style="font-size:0.62rem;opacity:0.75;letter-spacing:2px;text-transform:uppercase">Selecciona tu condominio</div></div>
+    <div><div style="font-size:1.4rem;font-weight:900">IGP Control v2.2</div><div style="font-size:0.62rem;opacity:0.75;letter-spacing:2px;text-transform:uppercase">Selecciona tu condominio</div></div>
   </div>
   <div class="ov-card">
     <h2>¿Cuál es tu condominio?</h2>
@@ -295,7 +295,7 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
 <div class="overlay ov-bg hidden" id="login-screen">
   <div class="ov-logo">
     <svg width="50" height="50" viewBox="0 0 64 64"><path d="M32 8L14 18L14 38C14 50 32 58 32 58C32 58 50 50 50 38L50 18Z" fill="none" stroke="white" stroke-width="3" stroke-linejoin="round"/><path d="M32 14L19 21L19 37C19 46 32 53 32 53C32 53 45 46 45 37L45 21Z" fill="rgba(255,255,255,0.2)"/><path d="M24 32L30 38L42 26" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-    <div><div style="font-size:1.35rem;font-weight:900">IGP Control v2.1</div><div id="login-condo-name" style="font-size:0.7rem;opacity:0.8;margin-top:2px"></div></div>
+    <div><div style="font-size:1.35rem;font-weight:900">IGP Control v2.2</div><div id="login-condo-name" style="font-size:0.7rem;opacity:0.8;margin-top:2px"></div></div>
   </div>
   <div class="ov-card">
     <h2>Iniciar Sesión</h2>
@@ -318,7 +318,7 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
   <header class="header">
     <div class="hdr-brand">
       <svg class="hdr-logo" viewBox="0 0 64 64"><path d="M32 6L12 17L12 39C12 52 32 60 32 60C32 60 52 52 52 39L52 17Z" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" stroke-linejoin="round"/><path d="M32 12L17 21L17 38C17 48 32 55 32 55C32 55 47 48 47 38L47 21Z" fill="rgba(255,255,255,0.18)"/><path d="M23 31L29 37L43 24" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-      <div class="hdr-title"><strong>IGP Control v2.1</strong><span id="hdr-cond">—</span></div>
+      <div class="hdr-title"><strong>IGP Control v2.2</strong><span id="hdr-cond">—</span></div>
     </div>
     <div class="hdr-r">
       <div class="sync-dot" id="sync-dot" title="Sincronización"></div>
@@ -668,16 +668,27 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
 
 <div class="mbg" id="modal-entregar">
   <div class="modal">
-    <div class="mt2">Registrar Entrega <button class="mc" onclick="closeModal('modal-entregar')">✕</button></div>
+    <div class="mt2">Registrar Entrega <button class="mc" onclick="closeModal('modal-entregar')">X</button></div>
     <div id="ent-info" class="info-box"></div>
-    <div class="fg"><label>RUT / ID de quien retira</label><input type="text" id="ent-rut" oninput="autoFillRetiro();if(true)rutField('ent-rut','ent-rut-h')"/><div class="rut-hint" id="ent-rut-h"></div></div>
-    <div class="fg"><label>Nombre de quien retira</label><input type="text" id="ent-nom" oninput="autoCapWords(this)"/></div>
-    <div id="ent-no-reg" class="hidden"><div class="alert a-war">Persona no registrada en esta unidad.</div><div class="fg"><label>¿Quién autorizó el retiro?</label><input type="text" id="ent-autoriza" placeholder="Nombre del residente que autorizó" oninput="autoCapWords(this)"/></div></div>
-    <div id="ent-pin-sec"><p class="tsm" style="margin-bottom:0.35rem">Solicita el PIN al residente:</p><div class="fg"><label>PIN (4 dígitos)</label><input type="text" id="ent-pin" placeholder="0000" maxlength="4" style="text-align:center;font-size:1.4rem;letter-spacing:8px;font-weight:800"/></div></div>
+    <div class="fg">
+      <label>Quien retira (residentes de la unidad)</label>
+      <div id="ent-res-list" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px"></div>
+      <div style="display:flex;align-items:center;gap:7px;margin-top:4px">
+        <div class="tog" id="tg-tercero" onclick="toggleTercero()"></div>
+        <span style="font-size:0.78rem;font-weight:600">Retira un tercero no registrado</span>
+      </div>
+    </div>
+    <div id="ent-res-sel-info" class="info-box hidden"></div>
+    <div id="ent-tercero-form" class="hidden">
+      <div class="fg"><label>RUT del tercero</label><input type="text" id="ent-rut" oninput="rutField('ent-rut','ent-rut-h')"/><div class="rut-hint" id="ent-rut-h"></div></div>
+      <div class="fg"><label>Nombre del tercero</label><input type="text" id="ent-nom" oninput="autoCapWords(this)"/></div>
+      <div class="fg"><label>Quien autorizo el retiro</label><input type="text" id="ent-autoriza" placeholder="Nombre del residente que autorizo" oninput="autoCapWords(this)"/></div>
+    </div>
+    <div id="ent-pin-sec"><p class="tsm" style="margin-bottom:0.35rem">Solicita el PIN al residente:</p><div class="fg"><label>PIN (4 digitos)</label><input type="text" id="ent-pin" maxlength="4" style="text-align:center;font-size:1.4rem;letter-spacing:8px;font-weight:800"/></div></div>
     <div class="fg"><label>Observaciones</label><textarea id="ent-obs"></textarea></div>
     <div id="ent-alert" class="hidden mt1"></div>
-    <button class="btn btn-p mt1" onclick="confirmarEntrega()">✓ Confirmar Entrega</button>
-    <div id="ent-admin-bypass" class="hidden mt1"><hr><p class="tsm" style="color:var(--red)">Forzar entrega (admin/supervisor):</p><div class="fg"><label>Tu Clave</label><input type="password" id="ent-adm-clave"/></div><button class="btn btn-red btn-sm" onclick="forzarEntrega()">Forzar Entrega</button></div>
+    <button class="btn btn-p mt1" onclick="confirmarEntrega()">Confirmar Entrega</button>
+    <div id="ent-admin-bypass" class="hidden mt1"><hr><p class="tsm" style="color:var(--red)">Forzar entrega:</p><div class="fg"><label>Tu Clave</label><input type="password" id="ent-adm-clave"/></div><button class="btn btn-red btn-sm" onclick="forzarEntrega()">Forzar Entrega</button></div>
   </div>
 </div>
 
@@ -1332,34 +1343,44 @@ function notifWA(){const{msg,tel}=getMsgNotif();if(!tel){alert('Sin teléfono re
 function notifEmail(){const{msg,email}=getMsgNotif();if(!email){alert('Sin correo registrado');return;}window.open(`mailto:${email}?subject=Encomienda en Conserjería - ${condos[activeCondo]?.condominio?.nombre||''}&body=${encodeURIComponent(msg)}`,'_blank');}
 function copiarMsg(){const{msg}=getMsgNotif();navigator.clipboard.writeText(msg).then(()=>alert('✓ Copiado')).catch(()=>alert('Cópialo manualmente'));}
 function abrirEntrega(id){
-  encEntregar=id;const enc=db.encomiendas.find(e=>e.id===id);if(!enc)return;
-  $i('ent-info').innerHTML=`📦 <strong>${enc.nomDest}</strong> · Dpto ${enc.dptoDest}<br><span class="tsm">${enc.empresa} · ${enc.fechaHora}</span>`;
-  $i('ent-rut').value='';$i('ent-nom').value='';$i('ent-pin').value='';$i('ent-obs').value='';$i('ent-adm-clave').value='';
-  $i('ent-no-reg').classList.add('hidden');$i('ent-pin-sec').classList.toggle('hidden',!enc.pinHash);
+  encEntregar=id; entResSel=null; entEsTercero=false;
+  var enc=db.encomiendas.find(function(e){return e.id===id;}); if(!enc)return;
+  $i('ent-info').innerHTML='<strong>'+enc.nomDest+'</strong> - Dpto '+enc.dptoDest+'<br><span class="tsm">'+enc.empresa+' - '+enc.fechaHora+'</span>';
+  ['ent-pin','ent-obs','ent-adm-clave','ent-rut','ent-nom','ent-autoriza'].forEach(function(fid){var el=$i(fid);if(el)el.value='';});
+  $i('ent-tercero-form').classList.add('hidden');
+  $i('ent-res-sel-info').classList.add('hidden');
+  $i('tg-tercero').classList.remove('on');
+  $i('ent-pin-sec').classList.toggle('hidden',!enc.pinHash);
   $i('ent-admin-bypass').classList.toggle('hidden',!hasPerm('encForzar'));
+  var residUnidad=db.residentes.filter(function(r){return r.dpto===enc.dptoDest;});
+  var listEl=$i('ent-res-list');
+  if(residUnidad.length){
+    var html='';
+    for(var i=0;i<residUnidad.length;i++){
+      var rid=getResId(residUnidad[i]);
+      html+='<button class="btn btn-out btn-sm erb" data-rid="'+rid+'" onclick="selResEntrega(this)" style="font-size:0.74rem">'+residUnidad[i].nombre+'</button> ';
+    }
+    listEl.innerHTML=html;
+    if(residUnidad.length===1){var fb=listEl.querySelector('.erb');if(fb)selResEntrega(fb);}
+  } else {
+    listEl.innerHTML='<span class="tsm" style="color:var(--gray)">Sin residentes registrados en esta unidad</span>';
+  }
   openModal('modal-entregar');
 }
-function autoFillRetiro(){
-  const id=v('ent-rut');if(!id||id.length<3)return;
-  const enc=db.encomiendas.find(e=>e.id===encEntregar);
-  // Buscar por ID exacto o aproximado
-  const r=db.residentes.find(x=>getResId(x)===id||(x.rut&&x.rut===id));
-  if(r){
-    $i('ent-nom').value=r.nombre;
-    // Es residente de la unidad?
-    $i('ent-no-reg').classList.toggle('hidden',r.dpto===enc?.dptoDest);
-  } else {
-    // No encontrado — permitir igual pero marcar aviso
-    $i('ent-no-reg').classList.remove('hidden');
-    $i('ent-nom').value='';
-  }
-}
+function autoFillRetiro(){/* handled by selResEntrega/toggleTercero */}
 function confirmarEntrega(){
-  const id=v('ent-rut'),nom=v('ent-nom');
-  if(!id||!nom){showAlert('ent-alert','Complete ID y nombre','a-err');return;}
-  const enc=db.encomiendas.find(e=>e.id===encEntregar);if(!enc)return;
-  if(enc.pinHash){const pin=v('ent-pin');if(btoa(pin+'_igp_'+enc.id)!==enc.pinHash){showAlert('ent-alert','PIN incorrecto','a-err');return;}}
-  completarEntrega(enc,id,nom,v('ent-autoriza'),v('ent-obs'));
+  var enc=db.encomiendas.find(function(e){return e.id===encEntregar;}); if(!enc)return;
+  var idR='', nomR='', autoriza='';
+  if(entEsTercero){
+    idR=v('ent-rut'); nomR=v('ent-nom'); autoriza=v('ent-autoriza');
+    if(!nomR){showAlert('ent-alert','Ingresa el nombre del tercero','a-err');return;}
+    if(!autoriza){showAlert('ent-alert','Ingresa quien autorizo el retiro','a-err');return;}
+  } else {
+    if(!entResSel){showAlert('ent-alert','Selecciona quien retira la encomienda','a-err');return;}
+    idR=getResId(entResSel); nomR=entResSel.nombre; autoriza='';
+  }
+  if(enc.pinHash){var pin=v('ent-pin');if(btoa(pin+'_igp_'+enc.id)!==enc.pinHash){showAlert('ent-alert','PIN incorrecto','a-err');return;}}
+  completarEntrega(enc,idR,nomR,autoriza,v('ent-obs'));
 }
 function forzarEntrega(){
   const enc=db.encomiendas.find(e=>e.id===encEntregar);if(!enc)return;
@@ -1763,6 +1784,31 @@ function dlPlantillaBit(){
   XLSX.writeFile(wb,'Plantilla_Bitacora_IGP.xlsx');
 }
 
+var entResSel=null;
+var entEsTercero=false;
+function selResEntrega(btn){
+  entEsTercero=false;
+  $i('tg-tercero').classList.remove('on');
+  $i('ent-tercero-form').classList.add('hidden');
+  var rid=btn.dataset.rid;
+  var r=db.residentes.find(function(x){return getResId(x)===rid;});
+  if(!r)return;
+  entResSel=r;
+  document.querySelectorAll('.erb').forEach(function(b){b.classList.remove('btn-teal');b.classList.add('btn-out');});
+  btn.classList.remove('btn-out'); btn.classList.add('btn-teal');
+  $i('ent-res-sel-info').innerHTML='<strong>'+r.nombre+'</strong>'+(r.tel?'<br>'+r.tel:'')+(r.email?'<br>'+r.email:'');
+  $i('ent-res-sel-info').classList.remove('hidden');
+}
+function toggleTercero(){
+  entEsTercero=!entEsTercero;
+  $i('tg-tercero').classList.toggle('on',entEsTercero);
+  $i('ent-tercero-form').classList.toggle('hidden',!entEsTercero);
+  $i('ent-res-sel-info').classList.toggle('hidden',entEsTercero);
+  if(entEsTercero){
+    entResSel=null;
+    document.querySelectorAll('.erb').forEach(function(b){b.classList.remove('btn-teal');b.classList.add('btn-out');});
+  }
+}
 // ================================================================
 // INIT
 // ================================================================
