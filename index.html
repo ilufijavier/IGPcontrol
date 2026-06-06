@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IGP Control v2.2</title>
+<title>IGP Control v2.3</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -146,7 +146,7 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
 <div class="overlay ov-bg" id="key-gate">
   <div class="ov-logo">
     <svg width="56" height="56" viewBox="0 0 64 64"><path d="M32 8L14 18L14 38C14 50 32 58 32 58C32 58 50 50 50 38L50 18Z" fill="none" stroke="white" stroke-width="3" stroke-linejoin="round"/><path d="M32 14L19 21L19 37C19 46 32 53 32 53C32 53 45 46 45 37L45 21Z" fill="rgba(255,255,255,0.22)"/><path d="M24 32L30 38L42 26" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-    <div><div style="font-size:1.5rem;font-weight:900">IGP Control v2.2</div></div>
+    <div><div style="font-size:1.5rem;font-weight:900">IGP Control v2.3</div></div>
   </div>
   <div class="ov-card">
     <h2>Clave de Acceso</h2>
@@ -160,7 +160,7 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
 <div class="overlay ov-bg hidden" id="condo-selector">
   <div class="ov-logo">
     <svg width="52" height="52" viewBox="0 0 64 64"><path d="M32 8L14 18L14 38C14 50 32 58 32 58C32 58 50 50 50 38L50 18Z" fill="none" stroke="white" stroke-width="3" stroke-linejoin="round"/><path d="M32 14L19 21L19 37C19 46 32 53 32 53C32 53 45 46 45 37L45 21Z" fill="rgba(255,255,255,0.2)"/><path d="M24 32L30 38L42 26" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-    <div><div style="font-size:1.4rem;font-weight:900">IGP Control v2.2</div><div style="font-size:0.62rem;opacity:0.75;letter-spacing:2px;text-transform:uppercase">Selecciona tu condominio</div></div>
+    <div><div style="font-size:1.4rem;font-weight:900">IGP Control v2.3</div><div style="font-size:0.62rem;opacity:0.75;letter-spacing:2px;text-transform:uppercase">Selecciona tu condominio</div></div>
   </div>
   <div class="ov-card">
     <h2>¿Cuál es tu condominio?</h2>
@@ -295,7 +295,7 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
 <div class="overlay ov-bg hidden" id="login-screen">
   <div class="ov-logo">
     <svg width="50" height="50" viewBox="0 0 64 64"><path d="M32 8L14 18L14 38C14 50 32 58 32 58C32 58 50 50 50 38L50 18Z" fill="none" stroke="white" stroke-width="3" stroke-linejoin="round"/><path d="M32 14L19 21L19 37C19 46 32 53 32 53C32 53 45 46 45 37L45 21Z" fill="rgba(255,255,255,0.2)"/><path d="M24 32L30 38L42 26" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-    <div><div style="font-size:1.35rem;font-weight:900">IGP Control v2.2</div><div id="login-condo-name" style="font-size:0.7rem;opacity:0.8;margin-top:2px"></div></div>
+    <div><div style="font-size:1.35rem;font-weight:900">IGP Control v2.3</div><div id="login-condo-name" style="font-size:0.7rem;opacity:0.8;margin-top:2px"></div></div>
   </div>
   <div class="ov-card">
     <h2>Iniciar Sesión</h2>
@@ -318,7 +318,7 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
   <header class="header">
     <div class="hdr-brand">
       <svg class="hdr-logo" viewBox="0 0 64 64"><path d="M32 6L12 17L12 39C12 52 32 60 32 60C32 60 52 52 52 39L52 17Z" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" stroke-linejoin="round"/><path d="M32 12L17 21L17 38C17 48 32 55 32 55C32 55 47 48 47 38L47 21Z" fill="rgba(255,255,255,0.18)"/><path d="M23 31L29 37L43 24" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-      <div class="hdr-title"><strong>IGP Control v2.2</strong><span id="hdr-cond">—</span></div>
+      <div class="hdr-title"><strong>IGP Control v2.3</strong><span id="hdr-cond">—</span></div>
     </div>
     <div class="hdr-r">
       <div class="sync-dot" id="sync-dot" title="Sincronización"></div>
@@ -424,7 +424,12 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
       </div>
       <div class="card">
         <div class="ct">Registrar Visita</div>
-        <div class="fg"><label>Depto a Visitar</label><select id="v-dpto" onchange="cargarAutDpto();buscarVisitaAutorizada()"><option value="">Seleccionar...</option></select></div>
+        <div class="fg">
+  <label>Depto a Visitar</label>
+  <input type="text" id="v-dpto-filtro" placeholder="Escribe torre o depto... ej: I-4" oninput="filtrarDptos()" autocomplete="off" style="margin-bottom:5px"/>
+  <select id="v-dpto" onchange="cargarAutDpto();buscarVisitaAutorizada()"><option value="">Seleccionar...</option></select>
+  <div id="v-dpto-hint" class="tsm" style="margin-top:3px;color:var(--gray)"></div>
+</div>
         <div class="fg"><label>Quién Autoriza (residente)</label><select id="v-aut"><option value="">Seleccionar...</option></select></div>
         <div id="visita-aut-prev" class="hidden" style="margin-bottom:0.6rem"></div>
         <div class="fg"><label>Nombre del Visitante</label><input type="text" id="v-nom" oninput="autoCapWords(this)"/></div>
@@ -1217,9 +1222,34 @@ function importRes(ev){
 // ================================================================
 // VISITAS
 // ================================================================
+var allDptos=[];
 function loadDptosVis(){
-  const dptos=[...new Set(db.residentes.map(r=>r.dpto))].sort();
-  $i('v-dpto').innerHTML='<option value="">Seleccionar...</option>'+dptos.map(d=>`<option value="${d}">${d}</option>`).join('');
+  allDptos=[...new Set(db.residentes.map(function(r){return r.dpto;}))].sort();
+  renderDptoSelect(allDptos);
+  $i('v-aut').innerHTML='<option value="">Seleccionar...</option>';
+  if($i('v-dpto-filtro'))$i('v-dpto-filtro').value='';
+  if($i('v-dpto-hint'))$i('v-dpto-hint').textContent='';
+}
+function renderDptoSelect(dptos){
+  $i('v-dpto').innerHTML='<option value="">Seleccionar...</option>'+dptos.map(function(d){return '<option value="'+d+'">'+d+'</option>';}).join('');
+}
+function filtrarDptos(){
+  var q=($i('v-dpto-filtro').value||'').toLowerCase().replace(/\s/g,'');
+  var filtered=allDptos.filter(function(d){return d.toLowerCase().replace(/\s/g,'').includes(q);});
+  renderDptoSelect(filtered);
+  // Auto-select if only one result
+  if(filtered.length===1){
+    $i('v-dpto').value=filtered[0];
+    cargarAutDpto(); buscarVisitaAutorizada();
+    $i('v-dpto-hint').textContent='';
+  } else if(q&&filtered.length>0){
+    $i('v-dpto-hint').textContent=filtered.length+' depto(s) encontrados';
+  } else if(q&&!filtered.length){
+    $i('v-dpto-hint').textContent='Sin resultados';
+  } else {
+    $i('v-dpto-hint').textContent='';
+  }
+  // Reset autoriza if depto changed
   $i('v-aut').innerHTML='<option value="">Seleccionar...</option>';
 }
 function cargarAutDpto(){
