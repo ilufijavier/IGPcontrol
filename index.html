@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IGP Control v2.3</title>
+<title>IGP Control v2.4</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -146,7 +146,7 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
 <div class="overlay ov-bg" id="key-gate">
   <div class="ov-logo">
     <svg width="56" height="56" viewBox="0 0 64 64"><path d="M32 8L14 18L14 38C14 50 32 58 32 58C32 58 50 50 50 38L50 18Z" fill="none" stroke="white" stroke-width="3" stroke-linejoin="round"/><path d="M32 14L19 21L19 37C19 46 32 53 32 53C32 53 45 46 45 37L45 21Z" fill="rgba(255,255,255,0.22)"/><path d="M24 32L30 38L42 26" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-    <div><div style="font-size:1.5rem;font-weight:900">IGP Control v2.3</div></div>
+    <div><div style="font-size:1.5rem;font-weight:900">IGP Control v2.4</div></div>
   </div>
   <div class="ov-card">
     <h2>Clave de Acceso</h2>
@@ -160,7 +160,7 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
 <div class="overlay ov-bg hidden" id="condo-selector">
   <div class="ov-logo">
     <svg width="52" height="52" viewBox="0 0 64 64"><path d="M32 8L14 18L14 38C14 50 32 58 32 58C32 58 50 50 50 38L50 18Z" fill="none" stroke="white" stroke-width="3" stroke-linejoin="round"/><path d="M32 14L19 21L19 37C19 46 32 53 32 53C32 53 45 46 45 37L45 21Z" fill="rgba(255,255,255,0.2)"/><path d="M24 32L30 38L42 26" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-    <div><div style="font-size:1.4rem;font-weight:900">IGP Control v2.3</div><div style="font-size:0.62rem;opacity:0.75;letter-spacing:2px;text-transform:uppercase">Selecciona tu condominio</div></div>
+    <div><div style="font-size:1.4rem;font-weight:900">IGP Control v2.4</div><div style="font-size:0.62rem;opacity:0.75;letter-spacing:2px;text-transform:uppercase">Selecciona tu condominio</div></div>
   </div>
   <div class="ov-card">
     <h2>¿Cuál es tu condominio?</h2>
@@ -295,7 +295,7 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
 <div class="overlay ov-bg hidden" id="login-screen">
   <div class="ov-logo">
     <svg width="50" height="50" viewBox="0 0 64 64"><path d="M32 8L14 18L14 38C14 50 32 58 32 58C32 58 50 50 50 38L50 18Z" fill="none" stroke="white" stroke-width="3" stroke-linejoin="round"/><path d="M32 14L19 21L19 37C19 46 32 53 32 53C32 53 45 46 45 37L45 21Z" fill="rgba(255,255,255,0.2)"/><path d="M24 32L30 38L42 26" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-    <div><div style="font-size:1.35rem;font-weight:900">IGP Control v2.3</div><div id="login-condo-name" style="font-size:0.7rem;opacity:0.8;margin-top:2px"></div></div>
+    <div><div style="font-size:1.35rem;font-weight:900">IGP Control v2.4</div><div id="login-condo-name" style="font-size:0.7rem;opacity:0.8;margin-top:2px"></div></div>
   </div>
   <div class="ov-card">
     <h2>Iniciar Sesión</h2>
@@ -318,7 +318,7 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
   <header class="header">
     <div class="hdr-brand">
       <svg class="hdr-logo" viewBox="0 0 64 64"><path d="M32 6L12 17L12 39C12 52 32 60 32 60C32 60 52 52 52 39L52 17Z" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" stroke-linejoin="round"/><path d="M32 12L17 21L17 38C17 48 32 55 32 55C32 55 47 48 47 38L47 21Z" fill="rgba(255,255,255,0.18)"/><path d="M23 31L29 37L43 24" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-      <div class="hdr-title"><strong>IGP Control v2.3</strong><span id="hdr-cond">—</span></div>
+      <div class="hdr-title"><strong>IGP Control v2.4</strong><span id="hdr-cond">—</span></div>
     </div>
     <div class="hdr-r">
       <div class="sync-dot" id="sync-dot" title="Sincronización"></div>
@@ -346,6 +346,7 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
     <div id="section-dashboard" class="section active">
       <div id="remp-banner" class="remp-banner hidden"></div>
       <div id="sync-banner" class="alert a-inf hidden" style="margin-bottom:0.7rem"></div>
+      <div id="rol-banner" class="alert a-inf hidden" style="margin-bottom:0.7rem;font-size:0.75rem"></div>
       <div class="sg">
         <div class="sc"><div class="si" style="background:var(--bl)"><svg fill="var(--blue)" viewBox="0 0 24 24" width="17" height="17"><path d="M12 12c2.7 0 5-2.3 5-5S14.7 2 12 2 7 4.3 7 7s2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg></div><div class="sn" id="st-r">0</div><div class="sl">Residentes</div></div>
         <div class="sc"><div class="si" style="background:var(--tl)"><svg fill="var(--teal)" viewBox="0 0 24 24" width="17" height="17"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div><div class="sn" id="st-v">0</div><div class="sl">Visitas Hoy</div></div>
@@ -953,8 +954,45 @@ function enterApp(){
   // Recover email
   if($i('rec-email'))$i('rec-email').textContent=db.admin?.email||'';
   updateTurnoUI();actualizarRempUI();updateDash();
-  // Si hay syncUrl, subir datos al entrar
-  if(db.syncUrl)setTimeout(()=>syncPushSilent().catch(()=>{}),2000);
+  // Mostrar banner de modo segun rol
+  var rolBanner=$i('rol-banner');
+  if(rolBanner){
+    var rolActual=cu?cu.rol:'guardia';
+    if(rolActual==='guardia'){rolBanner.textContent='Modo Guardia: sincroniza visitas, encomiendas y bitacora. Residentes actualizados al iniciar.';rolBanner.classList.remove('hidden');setTimeout(function(){rolBanner.classList.add('hidden');},6000);}
+    else if(rolActual==='admin'){rolBanner.textContent='Modo Administrador: registros del guardia actualizados al iniciar sesion.';rolBanner.classList.remove('hidden');setTimeout(function(){rolBanner.classList.add('hidden');},6000);}
+  }
+  // Al entrar: sync segun rol
+  if(db.syncUrl){
+    var rolEntrar=cu?cu.rol:'guardia';
+    if(rolEntrar==='guardia'){
+      // Guardia: baja residentes frescos, luego sube sus registros
+      setTimeout(function(){
+        addSyncLog('Actualizando residentes...');
+        callScript({action:'pullModule',module:'residentes'}).then(function(r){
+          if(r.data&&r.data.length){
+            db.residentes=r.data.map(function(row){return{nombre:row['Nombre']||'',dpto:row['Depto']||'',idTipo:row['Tipo ID']||'rut',idNum:row['Numero ID']||row['RUT']||'',rut:row['RUT']||'',tel:row['Telefono']||row['Teléfono']||'',email:row['Correo']||''};});
+            saveDB();renderRes();loadDptosVis();loadDptosEnc();loadDptosBit();
+            if($i('r-filtro-dpto'))loadDptosFiltro();
+            addSyncLog('Residentes: '+db.residentes.length,'ok');
+          }
+        }).catch(function(){});
+        setTimeout(function(){syncPushSilent();},3000);
+      },1500);
+    } else {
+      // Admin/supervisor: baja registros del guardia, sube su parte
+      setTimeout(function(){
+        addSyncLog('Actualizando registros del turno...');
+        callScript({action:'pullAll'}).then(function(r){
+          if(r.visitas&&r.visitas.length){db.visitas=r.visitas.map(function(row){return{nombre:row['Nombre']||'',idNum:row['Numero ID']||row['RUT']||'',rut:row['RUT']||'',dpto:row['Depto']||'',autoriza:row['Autoriza']||'',fechaHora:row['Fecha y Hora']||'',guardia:row['Guardia']||'',obs:row['Observaciones']||'',observaciones:[],usada:false,id:Date.now()+Math.random()};});}
+          if(r.encomiendas&&r.encomiendas.length){db.encomiendas=r.encomiendas.map(function(row){return{nomDest:row['Destinatario']||'',rutDest:row['ID Dest']||'',dptoDest:row['Depto']||'',nombreRep:row['Repartidor']||'',empresa:row['Empresa']||'',obs:row['Obs Recepcion']||'',fechaHora:row['Fecha Recepcion']||'',guardia:row['Recibio']||'',entregada:row['Entregada']==='Si',nomRetiro:row['Quien Retiro']||'',idRetiro:row['ID Retiro']||'',fechaEntrega:row['Fecha Entrega']||'',obsEntrega:row['Obs Entrega']||'',pinHash:null,id:Date.now()+Math.random()};});}
+          if(r.bitacora&&r.bitacora.length){db.bitacora=r.bitacora.map(function(row){return{dpto:row['Depto']||'',tipo:row['Tipo']||'',descripcion:row['Descripcion']||row['Descripción']||'',prioridad:row['Prioridad']||'normal',estado:row['Estado']||'abierto',fechaHora:row['Fecha y Hora']||'',guardia:row['Guardia']||'',observaciones:[],id:Date.now()+Math.random()};});}
+          saveDB();renderVis();renderEnc();renderBit();updateDash();
+          addSyncLog('Registros actualizados','ok');
+        }).catch(function(){});
+        setTimeout(function(){syncPushSilent();},4000);
+      },1500);
+    }
+  }
 }
 function openAdminPanel(){poblarRstUsr();openModal('modal-admin');}
 
@@ -1078,7 +1116,18 @@ async function verificarConexion(){
     $i('s-status-txt').textContent='Conectado';iniciarAutoSync();
   }catch(e){setSyncDot('err');addSyncLog('✗ '+e.message,'err');showAlert('sync-alert','Error: '+e.message,'a-err');$i('s-status-txt').textContent='Error';}
 }
-function buildPushPayload(){
+function buildPushPayload(rol){
+  // Guardia: solo sube visitas, encomiendas y bitacora
+  // Admin/supervisor: sube todo
+  var esGuardia=(rol||cu?.rol||'guardia')==='guardia';
+  if(esGuardia){
+    return{
+      visitas:db.visitas,
+      encomiendas:db.encomiendas,
+      bitacora:db.bitacora,
+      config:{condNombre:condos[activeCondo]?.condominio?.nombre||'',lastPush:nowDT()}
+    };
+  }
   return{
     residentes:db.residentes,visitas:db.visitas,encomiendas:db.encomiendas,
     bitacora:db.bitacora,usuarios:db.usuarios,turnos:db.turnos,
@@ -1097,11 +1146,20 @@ async function syncPush(){
 }
 async function syncPushSilent(){
   if(!db?.syncUrl)return;
-  // No subir si no hay datos relevantes (evita borrar Sheets con condo recien creado)
-  const hasData=db.residentes.length||db.visitas.length||db.encomiendas.length||db.bitacora.length||db.usuarios.length;
-  if(!hasData)return;
-  try{callScript({action:'pushAll',payload:buildPushPayload()}).then(()=>{db.lastSync=nowDT();saveDB();setSyncDot('ok');}).catch(()=>setSyncDot('err'));}
-  catch(e){setSyncDot('err');}
+  const rol=cu?.rol||'guardia';
+  // Guardia: solo sube si hay registros propios
+  if(rol==='guardia'){
+    const hasData=db.visitas.length||db.encomiendas.length||db.bitacora.length;
+    if(!hasData)return;
+  } else {
+    const hasData=db.residentes.length||db.visitas.length||db.encomiendas.length||db.bitacora.length||db.usuarios.length;
+    if(!hasData)return;
+  }
+  try{
+    callScript({action:'pushAll',payload:buildPushPayload(rol)})
+      .then(()=>{db.lastSync=nowDT();saveDB();setSyncDot('ok');})
+      .catch(()=>setSyncDot('err'));
+  }catch(e){setSyncDot('err');}
 }
 function syncPull(){openModal('modal-confirm-pull');}
 function applyPullData(r,confirmMsg=true,fullPull=false){
