@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IGP Control v2.4</title>
+<title>IGP Control v2.5</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -146,7 +146,7 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
 <div class="overlay ov-bg" id="key-gate">
   <div class="ov-logo">
     <svg width="56" height="56" viewBox="0 0 64 64"><path d="M32 8L14 18L14 38C14 50 32 58 32 58C32 58 50 50 50 38L50 18Z" fill="none" stroke="white" stroke-width="3" stroke-linejoin="round"/><path d="M32 14L19 21L19 37C19 46 32 53 32 53C32 53 45 46 45 37L45 21Z" fill="rgba(255,255,255,0.22)"/><path d="M24 32L30 38L42 26" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-    <div><div style="font-size:1.5rem;font-weight:900">IGP Control v2.4</div></div>
+    <div><div style="font-size:1.5rem;font-weight:900">IGP Control v2.5</div></div>
   </div>
   <div class="ov-card">
     <h2>Clave de Acceso</h2>
@@ -160,7 +160,7 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
 <div class="overlay ov-bg hidden" id="condo-selector">
   <div class="ov-logo">
     <svg width="52" height="52" viewBox="0 0 64 64"><path d="M32 8L14 18L14 38C14 50 32 58 32 58C32 58 50 50 50 38L50 18Z" fill="none" stroke="white" stroke-width="3" stroke-linejoin="round"/><path d="M32 14L19 21L19 37C19 46 32 53 32 53C32 53 45 46 45 37L45 21Z" fill="rgba(255,255,255,0.2)"/><path d="M24 32L30 38L42 26" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-    <div><div style="font-size:1.4rem;font-weight:900">IGP Control v2.4</div><div style="font-size:0.62rem;opacity:0.75;letter-spacing:2px;text-transform:uppercase">Selecciona tu condominio</div></div>
+    <div><div style="font-size:1.4rem;font-weight:900">IGP Control v2.5</div><div style="font-size:0.62rem;opacity:0.75;letter-spacing:2px;text-transform:uppercase">Selecciona tu condominio</div></div>
   </div>
   <div class="ov-card">
     <h2>¿Cuál es tu condominio?</h2>
@@ -295,7 +295,7 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
 <div class="overlay ov-bg hidden" id="login-screen">
   <div class="ov-logo">
     <svg width="50" height="50" viewBox="0 0 64 64"><path d="M32 8L14 18L14 38C14 50 32 58 32 58C32 58 50 50 50 38L50 18Z" fill="none" stroke="white" stroke-width="3" stroke-linejoin="round"/><path d="M32 14L19 21L19 37C19 46 32 53 32 53C32 53 45 46 45 37L45 21Z" fill="rgba(255,255,255,0.2)"/><path d="M24 32L30 38L42 26" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-    <div><div style="font-size:1.35rem;font-weight:900">IGP Control v2.4</div><div id="login-condo-name" style="font-size:0.7rem;opacity:0.8;margin-top:2px"></div></div>
+    <div><div style="font-size:1.35rem;font-weight:900">IGP Control v2.5</div><div id="login-condo-name" style="font-size:0.7rem;opacity:0.8;margin-top:2px"></div></div>
   </div>
   <div class="ov-card">
     <h2>Iniciar Sesión</h2>
@@ -318,7 +318,7 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
   <header class="header">
     <div class="hdr-brand">
       <svg class="hdr-logo" viewBox="0 0 64 64"><path d="M32 6L12 17L12 39C12 52 32 60 32 60C32 60 52 52 52 39L52 17Z" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" stroke-linejoin="round"/><path d="M32 12L17 21L17 38C17 48 32 55 32 55C32 55 47 48 47 38L47 21Z" fill="rgba(255,255,255,0.18)"/><path d="M23 31L29 37L43 24" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-      <div class="hdr-title"><strong>IGP Control v2.4</strong><span id="hdr-cond">—</span></div>
+      <div class="hdr-title"><strong>IGP Control v2.5</strong><span id="hdr-cond">—</span></div>
     </div>
     <div class="hdr-r">
       <div class="sync-dot" id="sync-dot" title="Sincronización"></div>
@@ -425,25 +425,26 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
       </div>
       <div class="card">
         <div class="ct">Registrar Visita</div>
-        <div class="fg">
+        <div class="fg" style="position:relative">
   <label>Depto a Visitar</label>
-  <input type="text" id="v-dpto-filtro" placeholder="Escribe torre o depto... ej: I-4" oninput="filtrarDptos()" autocomplete="off" style="margin-bottom:5px"/>
-  <select id="v-dpto" onchange="cargarAutDpto();buscarVisitaAutorizada()"><option value="">Seleccionar...</option></select>
+  <input type="text" id="v-dpto-filtro" placeholder="Escribe torre o numero... ej: I-4" oninput="filtrarDptos()" onfocus="filtrarDptos()" autocomplete="off"/>
+  <div id="v-dpto-dropdown" class="hidden" style="position:absolute;z-index:200;left:0;right:0;background:white;border:1.5px solid var(--bm);border-radius:0 0 9px 9px;max-height:200px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,0.15)"></div>
+  <input type="hidden" id="v-dpto" value=""/>
   <div id="v-dpto-hint" class="tsm" style="margin-top:3px;color:var(--gray)"></div>
 </div>
         <div class="fg"><label>Quién Autoriza (residente)</label><select id="v-aut"><option value="">Seleccionar...</option></select></div>
         <div id="visita-aut-prev" class="hidden" style="margin-bottom:0.6rem"></div>
-        <div class="fg"><label>Nombre del Visitante</label><input type="text" id="v-nom" oninput="autoCapWords(this)"/></div>
         <div class="fg">
           <label>Tipo de Identificación</label>
-          <select id="v-id-tipo">
+          <select id="v-id-tipo" onchange="if(this.value==='rut')rutField('v-rut','v-rut-h')">
             <option value="rut">RUT (Chile)</option>
             <option value="pasaporte">Pasaporte</option>
             <option value="dni">DNI / Cédula extranjera</option>
             <option value="otro">Otro</option>
           </select>
         </div>
-        <div class="fg"><label>Número de Identificación</label><input type="text" id="v-rut" oninput="autoFillVis();if(v('v-id-tipo')==='rut')rutField('v-rut','v-rut-h')"/><div class="rut-hint" id="v-rut-h"></div></div>
+        <div class="fg"><label>Número de Identificación *</label><input type="text" id="v-rut" oninput="autoFillVis();if(v('v-id-tipo')==='rut')rutField('v-rut','v-rut-h')" placeholder="Ingresa RUT o ID — se completa el nombre"/><div class="rut-hint" id="v-rut-h"></div></div>
+        <div class="fg"><label>Nombre del Visitante *</label><input type="text" id="v-nom" oninput="autoCapWords(this)" placeholder="Se completa automático si ya visitó antes"/></div>
         <div class="tr2"><span class="tl2">¿Ingresa con vehículo?</span><div class="tog" id="tg-veh" onclick="tog('veh')"></div></div>
         <div id="cv" class="hidden" style="margin-top:0.35rem">
           <div class="fr">
@@ -472,8 +473,10 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
           <div id="v-vigencia-custom" class="fg hidden"><label>Horas personalizadas</label><input type="number" id="v-vigencia-hrs" min="1" max="72" value="4"/></div>
         </div>
         <div class="fg"><label>Observaciones</label><textarea id="v-obs"></textarea></div>
+        <div id="v-visitantes-lista" style="margin-top:0.6rem"></div>
+        <button class="btn btn-sec" style="width:100%;justify-content:center;margin-top:0.4rem" onclick="agregarVisitanteLista()">+ Agregar visitante a la lista</button>
         <div id="v-alert" class="hidden mt1"></div>
-        <button class="btn btn-p mt1" onclick="registrarVis()">✓ Registrar Entrada</button>
+        <button class="btn btn-p mt1" onclick="registrarVisMultiple()">✓ Registrar Entrada(s)</button>
       </div>
       <div id="admin-vis" class="card hidden"><button class="btn btn-pur btn-sm" onclick="exportVis()">⬇ Exportar Visitas</button></div>
       <div class="card"><div class="ct">Visitas (<span id="v-cnt">0</span>)</div><div id="v-lista"></div></div>
@@ -1293,26 +1296,40 @@ function renderDptoSelect(dptos){
 }
 function filtrarDptos(){
   var q=($i('v-dpto-filtro').value||'').toLowerCase().replace(/\s/g,'');
-  var filtered=allDptos.filter(function(d){return d.toLowerCase().replace(/\s/g,'').includes(q);});
-  renderDptoSelect(filtered);
-  // Auto-select if only one result
-  if(filtered.length===1){
-    $i('v-dpto').value=filtered[0];
-    cargarAutDpto(); buscarVisitaAutorizada();
-    $i('v-dpto-hint').textContent='';
-  } else if(q&&filtered.length>0){
-    $i('v-dpto-hint').textContent=filtered.length+' depto(s) encontrados';
-  } else if(q&&!filtered.length){
-    $i('v-dpto-hint').textContent='Sin resultados';
-  } else {
-    $i('v-dpto-hint').textContent='';
+  var filtered=q?allDptos.filter(function(d){return d.toLowerCase().replace(/\s/g,'').includes(q);}):allDptos;
+  var dd=$i('v-dpto-dropdown');
+  if(!dd)return;
+  if(!filtered.length){
+    dd.innerHTML='<div style="padding:8px 12px;font-size:0.8rem;color:var(--gray)">Sin resultados</div>';
+    dd.classList.remove('hidden');
+    return;
   }
-  // Reset autoriza if depto changed
-  $i('v-aut').innerHTML='<option value="">Seleccionar...</option>';
+  dd.innerHTML=filtered.map(function(d){
+    return '<div data-dpto="'+d+'" onclick="selDptoVis(this.dataset.dpto)" style="padding:8px 12px;font-size:0.82rem;cursor:pointer;border-bottom:1px solid var(--border)">'+d+'</div>';
+  }).join('');
+  dd.classList.remove('hidden');
+  // Auto-select if exactly one
+  if(filtered.length===1){
+    selDptoVis(filtered[0]);
+  }
 }
+function selDptoVis(dpto){
+  $i('v-dpto').value=dpto;
+  $i('v-dpto-filtro').value=dpto;
+  var dd=$i('v-dpto-dropdown');
+  if(dd)dd.classList.add('hidden');
+  $i('v-dpto-hint').textContent='';
+  cargarAutDpto(); buscarVisitaAutorizada();
+}
+// Close dropdown when clicking outside
+document.addEventListener('click',function(e){
+  var dd=$i('v-dpto-dropdown');
+  var fi=$i('v-dpto-filtro');
+  if(dd&&fi&&!fi.contains(e.target)&&!dd.contains(e.target))dd.classList.add('hidden');
+});
 function cargarAutDpto(){
-  const dpto=v('v-dpto');
-  $i('v-aut').innerHTML='<option value="">Seleccionar...</option>'+db.residentes.filter(r=>r.dpto===dpto).map(r=>`<option value="${r.nombre}">${r.nombre}</option>`).join('');
+  var dpto=$i('v-dpto')?$i('v-dpto').value:'';
+  $i('v-aut').innerHTML='<option value="">Seleccionar...</option>'+db.residentes.filter(function(r){return r.dpto===dpto;}).map(function(r){return '<option value="'+r.nombre+'">'+r.nombre+'</option>';}).join('');
   buscarVisitaAutorizada();
 }
 function autoFillVis(){
@@ -1897,6 +1914,99 @@ function toggleTercero(){
     document.querySelectorAll('.erb').forEach(function(b){b.classList.remove('btn-teal');b.classList.add('btn-out');});
   }
 }
+// ================================================================
+// MULTIPLE VISITORS
+// ================================================================
+var listaVisitantes=[]; // array of {idNum,idTipo,nombre}
+
+function autoFillVisFromId(){
+  var id=v('v-rut');
+  if(!id||id.length<3)return;
+  // Search in previous visits
+  var hist=db.visitas.filter(function(x){return(x.rut||x.idNum||'')===id;});
+  if(hist.length){var l=hist[hist.length-1];$i('v-nom').value=l.nombre;return;}
+  // Search in visitantes table
+  if(db.visitantes){var vt=db.visitantes.find(function(x){return x.idNum===id;});if(vt){$i('v-nom').value=vt.nombre;}}
+}
+
+function agregarVisitanteLista(){
+  var idNum=v('v-rut'), nom=v('v-nom'), idTipo=v('v-id-tipo');
+  if(!nom){showAlert('v-alert','Ingresa el nombre antes de agregar','a-err');return;}
+  if(!idNum){showAlert('v-alert','Ingresa el numero de identificacion','a-err');return;}
+  if(idTipo==='rut'&&!validRut(idNum)){showAlert('v-alert','RUT invalido','a-err');return;}
+  if(listaVisitantes.find(function(x){return x.idNum===idNum;})){showAlert('v-alert','Ya esta en la lista','a-war');return;}
+  listaVisitantes.push({idNum:idNum,idTipo:idTipo,nombre:nom});
+  $i('v-rut').value=''; $i('v-nom').value=''; $i('v-rut-h').textContent='';
+  renderListaVisitantes();
+  showAlert('v-alert','Agregado: '+nom,'a-ok');
+}
+
+function renderListaVisitantes(){
+  var el=$i('v-visitantes-lista'); if(!el)return;
+  if(!listaVisitantes.length){el.innerHTML='';return;}
+  el.innerHTML='<div class="alert a-inf" style="font-size:0.75rem;margin-bottom:0.4rem">'+listaVisitantes.length+' visitante(s) en lista:</div>'+
+    listaVisitantes.map(function(vt,i){
+      return '<div class="li" style="padding:5px 0"><div class="av" style="width:28px;height:28px;font-size:0.65rem">'+ini(vt.nombre)+'</div>'+
+        '<div class="li-i"><div class="li-n" style="font-size:0.79rem">'+vt.nombre+'</div><div class="li-s">'+vt.idNum+'</div></div>'+
+        '<button class="btn btn-err btn-sm" onclick="listaVisitantes.splice('+i+',1);renderListaVisitantes()">X</button></div>';
+    }).join('');
+}
+
+function registrarVisMultiple(){
+  var dpto=$i('v-dpto')?$i('v-dpto').value:'';
+  var idNumCurrent=v('v-rut'), nomCurrent=v('v-nom'), idTipoCurrent=v('v-id-tipo');
+  // If there's a current visitant not yet added, add them too
+  if(nomCurrent&&idNumCurrent){
+    if(!listaVisitantes.find(function(x){return x.idNum===idNumCurrent;})){
+      listaVisitantes.push({idNum:idNumCurrent,idTipo:idTipoCurrent,nombre:nomCurrent});
+    }
+  }
+  if(!dpto){showAlert('v-alert','Selecciona el depto a visitar','a-err');return;}
+  if(!listaVisitantes.length){showAlert('v-alert','Agrega al menos un visitante','a-err');return;}
+  var actor=quienActua();
+  var autoriza=v('v-aut'), obs=v('v-obs');
+  var patente='', estac='', hasta='', vigSel='0', vigHrs=0, soloUno=false;
+  if(togs.veh){patente=v('v-pat');estac=v('v-est');}
+  if(togs.aut){
+    vigSel=v('v-vigencia');hasta=v('v-hasta');
+    if(vigSel!=='0'){
+      vigHrs=vigSel==='custom'?parseInt(v('v-vigencia-hrs')):parseInt(vigSel);
+      var exp=new Date();exp.setHours(exp.getHours()+vigHrs);
+      hasta=pad(exp.getDate())+'-'+pad(exp.getMonth()+1)+'-'+exp.getFullYear();
+      soloUno=true;
+    }
+  }
+  // Register each visitor
+  var count=0;
+  listaVisitantes.forEach(function(vt){
+    var vis={nombre:vt.nombre,dpto:dpto,rut:vt.idTipo==='rut'?vt.idNum:'',idTipo:vt.idTipo,idNum:vt.idNum,
+      autoriza:autoriza,fechaHora:nowDT(),guardia:actor,obs:obs,observaciones:[],usada:false,id:Date.now()+count};
+    if(togs.veh){vis.patente=patente;vis.estac=estac;}
+    if(togs.aut&&hasta){vis.hasta=hasta;if(soloUno){vis.vigenciaHrs=vigHrs;vis.soloUnIngreso=true;}}
+    db.visitas.push(vis);
+    // Save to visitantes history
+    if(!db.visitantes)db.visitantes=[];
+    if(!db.visitantes.find(function(x){return x.idNum===vt.idNum;})){
+      db.visitantes.push({nombre:vt.nombre,idNum:vt.idNum,idTipo:vt.idTipo});
+    }
+    count++;
+  });
+  saveDB();
+  var n=listaVisitantes.length;
+  listaVisitantes=[];
+  renderListaVisitantes();
+  // Reset form
+  ['v-nom','v-pat','v-est','v-hasta','v-obs','v-rut'].forEach(function(fid){var el=$i(fid);if(el)el.value='';});
+  $i('v-rut-h').textContent='';
+  $i('v-aut').innerHTML='<option value="">Seleccionar...</option>';
+  togs.veh=false;togs.aut=false;
+  $i('tg-veh').classList.remove('on');$i('tg-aut').classList.remove('on');
+  $i('cv').classList.add('hidden');$i('ca').classList.add('hidden');
+  showAlert('v-alert',n+' visita(s) registrada(s)','a-ok');
+  renderVis();
+  if(db.syncUrl)syncPushSilent().catch(function(){});
+}
+
 // ================================================================
 // INIT
 // ================================================================
