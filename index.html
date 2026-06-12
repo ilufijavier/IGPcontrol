@@ -787,13 +787,41 @@ async function configurarDesdeScripts(){
     newDb.syncUrlOperacional=urlO;
     // From Maestro
     if(rM.condominio){
-      var cond={nombre:rM.condominio['Nombre']||rM.condominio.Nombre||'',rut:rM.condominio['RUT']||rM.condominio.RUT||rM.condominio.Rut||'',direccion:rM.condominio['Direccion']||rM.condominio.Direccion||''};
-      if(!cond.nombre) throw new Error('Script Maestro no tiene datos de condominio. Verifica la hoja "Condominio".');
-      if(!validRut(cond.rut)) throw new Error('RUT del condominio invalido en Script Maestro: '+cond.rut);
-      var adm=rM.administrador;
-      if(!adm) throw new Error('Script Maestro no tiene datos de administrador. Verifica la hoja "Administrador".');
-      newDb.admin={nombre:adm['Nombre']||adm.Nombre||'',rut:adm['RUT']||adm.RUT||'',clave:adm['Clave']||adm.Clave||'1234',email:adm['Correo']||adm.Correo||'',tel:adm['Telefono']||adm.Telefono||'',rol:'admin',debecambiar:false};
-      if(!validRut(newDb.admin.rut)) throw new Error('RUT del administrador invalido: '+newDb.admin.rut);
+      // Helper: busca clave flexible (sin asteriscos, sin tildes, parcial)
+      function findVal(obj, keywords){
+        var keys=Object.keys(obj);
+        for(var ki=0;ki<keywords.length;ki++){
+          var kw=keywords[ki].toLowerCase();
+          for(var i=0;i<keys.length;i++){
+            var cleanKey=keys[i].replace(/\*/g,'').replace(/[áàä]/g,'a').replace(/[éèë]/g,'e').replace(/[íìï]/g,'i').replace(/[óòö]/g,'o').replace(/[úùü]/g,'u').toLowerCase().trim();
+            if(cleanKey.includes(kw)&&obj[keys[i]]&&String(obj[keys[i]]).trim()){
+              return String(obj[keys[i]]).trim();
+            }
+          }
+        }
+        return '';
+      }
+      // Combinar condominio + administrador (pueden estar en la misma hoja)
+      var allData=Object.assign({},rM.condominio,rM.administrador||{});
+      var cond={
+        nombre:findVal(allData,['nombre del condominio','nombre condominio','nombre']),
+        rut:findVal(allData,['rut del condominio','rut condominio']),
+        direccion:findVal(allData,['direccion','dirección']),
+        email:findVal(allData,['correo del condominio','correo condominio'])
+      };
+      if(!cond.nombre) throw new Error('No se encontro el Nombre del Condominio. Verifica la hoja "Condominio" en el Script Maestro.');
+      if(!cond.rut) throw new Error('No se encontro el RUT del Condominio. Verifica la hoja "Condominio" en el Script Maestro.');
+      if(!validRut(cond.rut)) throw new Error('RUT del condominio invalido: '+cond.rut+'. Debe tener formato 65.215.059-4');
+      // Leer administrador
+      var admNombre=findVal(allData,['nombre del administrador','nombre administrador']);
+      var admRut=findVal(allData,['rut del administrador','rut administrador']);
+      var admClave=findVal(allData,['clave inicial','clave']);
+      var admEmail=findVal(allData,['correo personal','correo administrador','correo']);
+      var admTel=findVal(allData,['telefono','teléfono','whatsapp']);
+      if(!admNombre) throw new Error('No se encontro el Nombre del Administrador. Verifica la hoja "Condominio" en el Script Maestro.');
+      if(!admRut) throw new Error('No se encontro el RUT del Administrador. Verifica la hoja "Condominio" en el Script Maestro.');
+      if(!validRut(admRut)) throw new Error('RUT del administrador invalido: '+admRut);
+      newDb.admin={nombre:admNombre,rut:admRut,clave:admClave||'Admin2024',email:admEmail||cond.email||'',tel:admTel||'',rol:'admin',debecambiar:false};
       if(rM.residentes&&rM.residentes.length) newDb.residentes=rM.residentes.map(function(row){return{nombre:row['Nombre']||'',dpto:row['Depto']||'',idTipo:row['Tipo ID']||'rut',idNum:row['Numero ID']||row['RUT']||'',rut:row['RUT']||'',tel:row['Telefono']||row['Teléfono']||'',email:row['Correo']||''};});
       if(rM.usuarios&&rM.usuarios.length) newDb.usuarios=rM.usuarios.map(function(row){var rol=String(row['Rol']||'guardia').toLowerCase();return{nombre:row['Nombre']||'',rut:row['RUT']||'',rol:rol.includes('super')?'supervisor':rol.includes('comit')?'comite':rol.includes('admin')?'admin':'guardia',tel:row['Telefono']||row['Teléfono']||'',email:row['Correo']||'',clave:row['Clave']||'1234',debecambiar:row['Debe cambiar clave']==='Si',activo:row['Activo']!=='No',perms:{},id:row['ID']?+row['ID']:Date.now()+Math.random()};});
       // From Operacional
