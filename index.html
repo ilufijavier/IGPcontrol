@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IGP Control v2.5</title>
+<title>IGP Control v2.7</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -146,7 +146,7 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
 <div class="overlay ov-bg" id="key-gate">
   <div class="ov-logo">
     <svg width="56" height="56" viewBox="0 0 64 64"><path d="M32 8L14 18L14 38C14 50 32 58 32 58C32 58 50 50 50 38L50 18Z" fill="none" stroke="white" stroke-width="3" stroke-linejoin="round"/><path d="M32 14L19 21L19 37C19 46 32 53 32 53C32 53 45 46 45 37L45 21Z" fill="rgba(255,255,255,0.22)"/><path d="M24 32L30 38L42 26" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-    <div><div style="font-size:1.5rem;font-weight:900">IGP Control v2.5</div></div>
+    <div><div style="font-size:1.5rem;font-weight:900">IGP Control v2.7</div></div>
   </div>
   <div class="ov-card">
     <h2>Clave de Acceso</h2>
@@ -160,7 +160,7 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
 <div class="overlay ov-bg hidden" id="condo-selector">
   <div class="ov-logo">
     <svg width="52" height="52" viewBox="0 0 64 64"><path d="M32 8L14 18L14 38C14 50 32 58 32 58C32 58 50 50 50 38L50 18Z" fill="none" stroke="white" stroke-width="3" stroke-linejoin="round"/><path d="M32 14L19 21L19 37C19 46 32 53 32 53C32 53 45 46 45 37L45 21Z" fill="rgba(255,255,255,0.2)"/><path d="M24 32L30 38L42 26" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-    <div><div style="font-size:1.4rem;font-weight:900">IGP Control v2.5</div><div style="font-size:0.62rem;opacity:0.75;letter-spacing:2px;text-transform:uppercase">Selecciona tu condominio</div></div>
+    <div><div style="font-size:1.4rem;font-weight:900">IGP Control v2.7</div><div style="font-size:0.62rem;opacity:0.75;letter-spacing:2px;text-transform:uppercase">Selecciona tu condominio</div></div>
   </div>
   <div class="ov-card">
     <h2>¿Cuál es tu condominio?</h2>
@@ -179,146 +179,38 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
 
 <!-- SETUP (new condo) -->
 <div class="overlay ov-bg hidden" id="setup-screen">
-  <div class="ov-logo"><div style="font-size:1.4rem;font-weight:900;color:white">Nuevo Condominio</div></div>
-  <div class="ov-card" style="max-height:90vh;overflow-y:auto">
-    <h2>Configurar Condominio</h2>
-    <!-- TABS -->
-    <div style="display:flex;border-radius:8px;overflow:hidden;border:1.5px solid var(--border);margin-bottom:0.9rem">
-      <button id="stab-0" onclick="sTab(0)" style="flex:1;padding:8px 4px;font-size:0.72rem;font-weight:700;border:none;font-family:Nunito;cursor:pointer;background:var(--blue);color:white">Condominio</button>
-      <button id="stab-1" onclick="sTab(1)" style="flex:1;padding:8px 4px;font-size:0.72rem;font-weight:700;border:none;font-family:Nunito;cursor:pointer;background:var(--grl);color:var(--gray)">Admin</button>
-      <button id="stab-2" onclick="sTab(2)" style="flex:1;padding:8px 4px;font-size:0.72rem;font-weight:700;border:none;font-family:Nunito;cursor:pointer;background:var(--grl);color:var(--gray)">Usuarios</button>
-      <button id="stab-3" onclick="sTab(3)" style="flex:1;padding:8px 4px;font-size:0.72rem;font-weight:700;border:none;font-family:Nunito;cursor:pointer;background:var(--grl);color:var(--gray)">Residentes</button>
-      <button id="stab-4" onclick="sTab(4)" style="flex:1;padding:8px 4px;font-size:0.72rem;font-weight:700;border:none;font-family:Nunito;cursor:pointer;background:var(--grl);color:var(--gray)">Registros</button>
-    </div>
-    <!-- TAB 0: Condominio -->
-    <div id="sp-0">
-      <div class="fg"><label>Nombre del Condominio *</label><input type="text" id="s-nom"/></div>
-      <div class="fg"><label>RUT del Condominio *</label><input type="text" id="s-rut" oninput="rutField('s-rut','s-rut-h')"/><div class="rut-hint" id="s-rut-h"></div></div>
-      <div class="fg"><label>Dirección</label><input type="text" id="s-dir"/></div>
-      <div class="fg"><label>URL Google Apps Script</label><input type="url" id="s-sheeturl" placeholder="https://script.google.com/macros/s/.../exec"/></div>
-      <div class="alert a-inf" style="font-size:0.73rem;margin-top:0.3rem">Con la URL configurada, la app descarga automaticamente todos los datos existentes en Google Sheets al crear el condominio.</div>
-    </div>
-    <!-- TAB 1: Administrador -->
-    <div id="sp-1" class="hidden">
-      <div class="fg"><label>Nombre del Administrador *</label><input type="text" id="s-anom"/></div>
-      <div class="fg"><label>RUT *</label><input type="text" id="s-arut" oninput="rutField('s-arut','s-arut-h')"/><div class="rut-hint" id="s-arut-h"></div></div>
-      <div class="fg"><label>Correo</label><input type="email" id="s-email"/></div>
-      <div class="fg"><label>Clave *</label><input type="password" id="s-aclave"/></div>
-    </div>
-    <!-- TAB 2: Usuarios -->
-    <div id="sp-2" class="hidden">
-      <p class="tsm" style="margin-bottom:0.5rem">Agrega guardias, supervisores y miembros del comite.</p>
-      <div id="s-usr-list"></div>
-      <div style="border:1.5px dashed var(--border);border-radius:9px;padding:0.75rem;margin-top:0.4rem">
-        <div class="fg"><label>Nombre</label><input type="text" id="nu-nom"/></div>
-        <div class="fr">
-          <div><label>RUT</label><input type="text" id="nu-rut" oninput="rutField('nu-rut','nu-rut-h')"/><div class="rut-hint" id="nu-rut-h"></div></div>
-          <div><label>Rol</label><select id="nu-rol"><option value="guardia">Guardia</option><option value="supervisor">Supervisor</option><option value="comite">Comite</option></select></div>
-        </div>
-        <div class="fr">
-          <div><label>Telefono</label><input type="tel" id="nu-tel" placeholder="+56912345678"/></div>
-          <div><label>Clave</label><input type="password" id="nu-clave"/></div>
-        </div>
-        <button class="btn btn-sec btn-sm" onclick="addUsrSetup()">+ Agregar</button>
-      </div>
-      <hr>
-      <p class="tsm" style="margin-bottom:0.4rem">O importa desde Excel:</p>
-      <div class="btn-row">
-        <button class="btn btn-ora btn-sm" onclick="$i('imp-usr-s').click()">Importar Excel</button>
-        <button class="btn btn-out btn-sm" onclick="dlPlantillaUsr()">Plantilla</button>
-      </div>
-      <input type="file" id="imp-usr-s" accept=".xlsx,.xls" class="hidden" onchange="importUsrS(event)"/>
-    </div>
-    <!-- TAB 3: Residentes -->
-    <div id="sp-3" class="hidden">
-      <div id="s-res-count" class="alert a-inf hidden" style="margin-bottom:0.5rem"></div>
-      <div style="border:1.5px dashed var(--border);border-radius:9px;padding:0.75rem">
-        <div class="fg"><label>Depto *</label><input type="text" id="nr-dpto" oninput="this.value=this.value.toUpperCase()" placeholder="B-402"/></div>
-        <div class="fg"><label>Nombre *</label><input type="text" id="nr-nom"/></div>
-        <div class="fr">
-          <div><label>Tipo ID</label><select id="nr-tipo"><option value="rut">RUT</option><option value="pasaporte">Pasaporte</option><option value="dni">DNI</option><option value="otro">Otro</option></select></div>
-          <div><label>Numero ID *</label><input type="text" id="nr-id"/></div>
-        </div>
-        <div class="fr">
-          <div><label>Telefono</label><input type="tel" id="nr-tel" placeholder="+56912345678"/></div>
-          <div><label>Correo</label><input type="email" id="nr-email"/></div>
-        </div>
-        <button class="btn btn-sec btn-sm" onclick="addResSetup()">+ Agregar</button>
-      </div>
-      <hr>
-      <div class="btn-row">
-        <button class="btn btn-ora btn-sm" onclick="$i('imp-res-s').click()">Importar Excel</button>
-        <button class="btn btn-out btn-sm" onclick="dlPlantillaRes()">Plantilla</button>
-      </div>
-      <input type="file" id="imp-res-s" accept=".xlsx,.xls" class="hidden" onchange="importResS(event)"/>
-    </div>
-    <!-- TAB 4: Registros iniciales -->
-    <div id="sp-4" class="hidden">
-      <p class="tsm" style="margin-bottom:0.6rem">Importa registros historicos de visitas, encomiendas y bitacora desde Excel.</p>
-      <div class="card" style="margin-bottom:0.6rem">
-        <div class="ct" style="margin-bottom:0.5rem">Visitas</div>
-        <div id="s-vis-count" class="tsm" style="margin-bottom:0.4rem">Sin visitas cargadas</div>
-        <div class="btn-row">
-          <button class="btn btn-ora btn-sm" onclick="$i('imp-vis-s').click()">Importar Excel</button>
-          <button class="btn btn-out btn-sm" onclick="dlPlantillaVis()">Plantilla</button>
-        </div>
-        <input type="file" id="imp-vis-s" accept=".xlsx,.xls" class="hidden" onchange="importVisS(event)"/>
-      </div>
-      <div class="card" style="margin-bottom:0.6rem">
-        <div class="ct" style="margin-bottom:0.5rem">Encomiendas</div>
-        <div id="s-enc-count" class="tsm" style="margin-bottom:0.4rem">Sin encomiendas cargadas</div>
-        <div class="btn-row">
-          <button class="btn btn-ora btn-sm" onclick="$i('imp-enc-s').click()">Importar Excel</button>
-          <button class="btn btn-out btn-sm" onclick="dlPlantillaEnc()">Plantilla</button>
-        </div>
-        <input type="file" id="imp-enc-s" accept=".xlsx,.xls" class="hidden" onchange="importEncS(event)"/>
-      </div>
-      <div class="card">
-        <div class="ct" style="margin-bottom:0.5rem">Bitacora</div>
-        <div id="s-bit-count" class="tsm" style="margin-bottom:0.4rem">Sin reportes cargados</div>
-        <div class="btn-row">
-          <button class="btn btn-ora btn-sm" onclick="$i('imp-bit-s').click()">Importar Excel</button>
-          <button class="btn btn-out btn-sm" onclick="dlPlantillaBit()">Plantilla</button>
-        </div>
-        <input type="file" id="imp-bit-s" accept=".xlsx,.xls" class="hidden" onchange="importBitS(event)"/>
-      </div>
-    </div>
-    <div id="setup-err" class="alert a-err hidden mt1"></div>
-    <div class="btn-row" style="margin-top:0.85rem">
-      <button class="btn btn-p" style="flex:1" onclick="finishSetup()">Crear Condominio</button>
-      <button class="btn btn-out" onclick="volverSelector()">Cancelar</button>
-    </div>
-  </div>
-</div>
-
-<!-- LOGIN -->
-<div class="overlay ov-bg hidden" id="login-screen">
   <div class="ov-logo">
-    <svg width="50" height="50" viewBox="0 0 64 64"><path d="M32 8L14 18L14 38C14 50 32 58 32 58C32 58 50 50 50 38L50 18Z" fill="none" stroke="white" stroke-width="3" stroke-linejoin="round"/><path d="M32 14L19 21L19 37C19 46 32 53 32 53C32 53 45 46 45 37L45 21Z" fill="rgba(255,255,255,0.2)"/><path d="M24 32L30 38L42 26" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-    <div><div style="font-size:1.35rem;font-weight:900">IGP Control v2.5</div><div id="login-condo-name" style="font-size:0.7rem;opacity:0.8;margin-top:2px"></div></div>
+    <svg width="52" height="52" viewBox="0 0 64 64"><path d="M32 8L14 18L14 38C14 50 32 58 32 58C32 58 50 50 50 38L50 18Z" fill="none" stroke="white" stroke-width="3" stroke-linejoin="round"/><path d="M32 14L19 21L19 37C19 46 32 53 32 53C32 53 45 46 45 37L45 21Z" fill="rgba(255,255,255,0.2)"/><path d="M24 32L30 38L42 26" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+    <div style="font-size:1.4rem;font-weight:900;color:white">IGP Control</div>
+    <div style="font-size:0.65rem;opacity:0.75;letter-spacing:2px;color:white;text-transform:uppercase">Configuracion Inicial</div>
   </div>
   <div class="ov-card">
-    <h2>Iniciar Sesión</h2>
-    <div class="fg"><label>RUT</label><input type="text" id="l-rut" oninput="rutField('l-rut','l-rut-h')"/><div class="rut-hint" id="l-rut-h"></div></div>
-    <div class="fg"><label>Clave</label><input type="password" id="l-clave" onkeydown="if(event.key==='Enter')doLogin()"/></div>
-    <div id="forzar-cambio" class="hidden">
-      <div class="alert a-war">Debes crear una nueva clave.</div>
-      <div class="fg"><label>Nueva Clave</label><input type="password" id="l-nueva"/></div>
-      <div class="fg"><label>Confirmar</label><input type="password" id="l-confirmar"/></div>
+    <h2>Conectar con Google Sheets</h2>
+    <p class="tsm" style="margin-bottom:1rem;color:var(--gray)">Ingresa las URLs de los dos scripts de Google Apps Script. La app descargara automaticamente todos los datos del condominio.</p>
+    <div class="fg">
+      <label>Script Maestro</label>
+      <input type="url" id="s-url-maestro" placeholder="https://script.google.com/macros/s/.../exec"/>
+      <div class="tsm" style="margin-top:3px">Condominio, administrador, residentes, usuarios</div>
     </div>
-    <div id="login-err" class="alert a-err hidden">RUT o clave incorrectos</div>
-    <button class="btn btn-p" id="login-btn" onclick="doLogin()">Ingresar</button>
-    <p class="link tc mt1" onclick="openModal('modal-recover')">¿Olvidaste tu clave?</p>
-    <p class="link tc mt1" style="color:var(--gray)" onclick="volverSelector()">← Cambiar condominio</p>
+    <div class="fg">
+      <label>Script Operacional</label>
+      <input type="url" id="s-url-operacional" placeholder="https://script.google.com/macros/s/.../exec"/>
+      <div class="tsm" style="margin-top:3px">Visitas, encomiendas, bitacora</div>
+    </div>
+    <div id="setup-status" class="hidden alert a-inf" style="margin-bottom:0.6rem"></div>
+    <div id="setup-err" class="alert a-err hidden"></div>
+    <button class="btn btn-p" id="setup-btn" onclick="configurarDesdeScripts()">Configurar desde Scripts</button>
+    <div style="text-align:center;margin-top:0.8rem">
+      <span class="link" style="font-size:0.75rem;color:var(--gray)" onclick="mostrarSetupManual()">Configurar manualmente sin scripts</span>
+    </div>
   </div>
 </div>
 
-<!-- MAIN APP -->
 <div id="main-app" class="hidden">
   <header class="header">
     <div class="hdr-brand">
       <svg class="hdr-logo" viewBox="0 0 64 64"><path d="M32 6L12 17L12 39C12 52 32 60 32 60C32 60 52 52 52 39L52 17Z" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2.5" stroke-linejoin="round"/><path d="M32 12L17 21L17 38C17 48 32 55 32 55C32 55 47 48 47 38L47 21Z" fill="rgba(255,255,255,0.18)"/><path d="M23 31L29 37L43 24" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-      <div class="hdr-title"><strong>IGP Control v2.5</strong><span id="hdr-cond">—</span></div>
+      <div class="hdr-title"><strong>IGP Control v2.7</strong><span id="hdr-cond">—</span></div>
     </div>
     <div class="hdr-r">
       <div class="sync-dot" id="sync-dot" title="Sincronización"></div>
@@ -611,7 +503,8 @@ hr{border:none;border-top:1px solid var(--border);margin:0.75rem 0}
     <div class="mt2">⚙ Panel Administrador <button class="mc" onclick="closeModal('modal-admin')">✕</button></div>
     <div class="sync-panel">
       <div class="sync-status-row"><div class="sdot" id="s-dot"></div><span id="s-status-txt">Sin configurar</span><span class="tsm" id="s-last-sync" style="margin-left:auto"></span></div>
-      <div class="fg"><label>URL Apps Script</label><input type="url" id="s-url" placeholder="https://script.google.com/macros/s/.../exec"/></div>
+      <div class="fg"><label>Script Maestro</label><input type="url" id="s-url-maestro-adm" placeholder="https://script.google.com/macros/s/.../exec" oninput="db.syncUrlMaestro=this.value;saveDB()"/><div class="tsm" style="margin-top:2px">Residentes, usuarios, turnos</div></div>
+      <div class="fg"><label>Script Operacional</label><input type="url" id="s-url-operacional-adm" placeholder="https://script.google.com/macros/s/.../exec" oninput="db.syncUrlOperacional=this.value;saveDB()"/><div class="tsm" style="margin-top:2px">Visitas, encomiendas, bitacora</div></div>
       <div class="fg"><label>Auto-sync cada</label><select id="s-interval"><option value="0">Sin auto-sync</option><option value="5">5 min</option><option value="10">10 min</option><option value="15" selected>15 min</option><option value="30">30 min</option></select></div>
       <div class="btn-row">
         <button class="btn btn-teal btn-sm" onclick="verificarConexion()">🔌 Verificar</button>
@@ -854,42 +747,98 @@ function seleccionarCondo(){
   showLogin();
 }
 function mostrarNuevoCondo(){$i('condo-selector').classList.add('hidden');$i('setup-screen').classList.remove('hidden');}
-function volverSelector(){$i('setup-screen').classList.add('hidden');$i('login-screen').classList.add('hidden');mostrarSelector();}
-function emptyDB(){return{admin:null,usuarios:[],turnos:[],turnoActivoId:null,remplazTemp:null,residentes:[],visitas:[],encomiendas:[],bitacora:[],syncUrl:'',syncInterval:15,lastSync:null};}
+function volverSelector(){
+  $i('setup-screen').classList.add('hidden');
+  // If condo already exists, go to login. If not, stay on setup.
+  if(condos.length>0){showLogin();}
+  else{mostrarSetupInicial();}
+}
+function mostrarSetupInicial(){
+  // Show setup screen for first-time configuration
+  $i('setup-screen').classList.remove('hidden');
+  $i('login-screen').classList.add('hidden');
+  $i('condo-selector').classList.add('hidden');
+  $i('main-app').classList.add('hidden');
+}
+function emptyDB(){return{admin:null,usuarios:[],turnos:[],turnoActivoId:null,remplazTemp:null,residentes:[],visitas:[],encomiendas:[],bitacora:[],visitantes:[],syncUrlMaestro:'',syncUrlOperacional:'',syncInterval:15,lastSync:null};}
 
 // ================================================================
 // SETUP
 // ================================================================
-function finishSetup(){
-  const nom=v('s-nom'),rut=v('s-rut'),dir=v('s-dir'),email=v('s-email'),
-        anom=v('s-anom'),arut=v('s-arut'),aclave=v('s-aclave'),sheeturl=v('s-sheeturl');
-  if(!nom||!rut){showAlert('setup-err','Nombre y RUT del condominio son obligatorios','a-err');return;}
-  if(!validRut(rut)){showAlert('setup-err','RUT del condominio invalido','a-err');return;}
-  if(!anom||!arut||!aclave){showAlert('setup-err','Completa los datos del administrador','a-err');return;}
-  if(!validRut(arut)){showAlert('setup-err','RUT del administrador invalido','a-err');return;}
-  const existIdx=condos.findIndex(cc=>cc.condominio.rut===rut);
-  const newDb=existIdx>=0?(condos[existIdx].db||emptyDB()):emptyDB();
-  newDb.admin={nombre:anom,rut:arut,clave:aclave,email,rol:'admin',debecambiar:false};
-  if(sUsuarios.length)newDb.usuarios=[...sUsuarios];
-  if(sResidentes.length)newDb.residentes=[...sResidentes];
-  if(sVisitas.length)newDb.visitas=[...sVisitas];
-  if(sEncomiendas.length)newDb.encomiendas=[...sEncomiendas];
-  if(sBitacora.length)newDb.bitacora=[...sBitacora];
-  if(sheeturl)newDb.syncUrl=sheeturl;
-  if(existIdx>=0){condos[existIdx].condominio={nombre:nom,rut,direccion:dir};condos[existIdx].db=newDb;activeCondo=existIdx;}
-  else{condos.push({condominio:{nombre:nom,rut,direccion:dir},db:newDb});activeCondo=condos.length-1;}
-  db=newDb; saveCondos();
-  sUsuarios=[];sResidentes=[];sVisitas=[];sEncomiendas=[];sBitacora=[];
-  $i('setup-screen').classList.add('hidden');
-  if(sheeturl){
-    // SOLO descarga (pull). NUNCA subir datos vacios al crear.
-    showLogin();
-    setTimeout(()=>autoInitialPull(),1000);
-  } else {
-    showLogin();
-    setTimeout(()=>alert('Condominio creado. Inicia sesion con tu RUT de administrador.'),300);
+async function configurarDesdeScripts(){
+  var urlM=v('s-url-maestro').trim();
+  var urlO=v('s-url-operacional').trim();
+  if(!urlM){showAlert('setup-err','Ingresa la URL del Script Maestro','a-err');return;}
+  if(!urlO){showAlert('setup-err','Ingresa la URL del Script Operacional','a-err');return;}
+  var btn=$i('setup-btn'); btn.disabled=true; btn.textContent='Conectando...';
+  var statusEl=$i('setup-status');
+  statusEl.classList.remove('hidden'); statusEl.textContent='Conectando con Script Maestro...';
+  try{
+    // Pull from Maestro
+    var rM=await callScriptUrl(urlM,'pullAll',null);
+    if(!rM.ok) throw new Error('Script Maestro: '+(rM.error||'Sin respuesta'));
+    statusEl.textContent='Descargando datos operacionales...';
+    // Pull from Operacional
+    var rO=await callScriptUrl(urlO,'pullAll',null);
+    if(!rO.ok) throw new Error('Script Operacional: '+(rO.error||'Sin respuesta'));
+    // Build db from scripts
+    var newDb=emptyDB();
+    newDb.syncUrlMaestro=urlM;
+    newDb.syncUrlOperacional=urlO;
+    // From Maestro
+    if(rM.condominio){
+      var cond={nombre:rM.condominio['Nombre']||rM.condominio.Nombre||'',rut:rM.condominio['RUT']||rM.condominio.RUT||rM.condominio.Rut||'',direccion:rM.condominio['Direccion']||rM.condominio.Direccion||''};
+      if(!cond.nombre) throw new Error('Script Maestro no tiene datos de condominio. Verifica la hoja "Condominio".');
+      if(!validRut(cond.rut)) throw new Error('RUT del condominio invalido en Script Maestro: '+cond.rut);
+      var adm=rM.administrador;
+      if(!adm) throw new Error('Script Maestro no tiene datos de administrador. Verifica la hoja "Administrador".');
+      newDb.admin={nombre:adm['Nombre']||adm.Nombre||'',rut:adm['RUT']||adm.RUT||'',clave:adm['Clave']||adm.Clave||'1234',email:adm['Correo']||adm.Correo||'',tel:adm['Telefono']||adm.Telefono||'',rol:'admin',debecambiar:false};
+      if(!validRut(newDb.admin.rut)) throw new Error('RUT del administrador invalido: '+newDb.admin.rut);
+      if(rM.residentes&&rM.residentes.length) newDb.residentes=rM.residentes.map(function(row){return{nombre:row['Nombre']||'',dpto:row['Depto']||'',idTipo:row['Tipo ID']||'rut',idNum:row['Numero ID']||row['RUT']||'',rut:row['RUT']||'',tel:row['Telefono']||row['Teléfono']||'',email:row['Correo']||''};});
+      if(rM.usuarios&&rM.usuarios.length) newDb.usuarios=rM.usuarios.map(function(row){var rol=String(row['Rol']||'guardia').toLowerCase();return{nombre:row['Nombre']||'',rut:row['RUT']||'',rol:rol.includes('super')?'supervisor':rol.includes('comit')?'comite':rol.includes('admin')?'admin':'guardia',tel:row['Telefono']||row['Teléfono']||'',email:row['Correo']||'',clave:row['Clave']||'1234',debecambiar:row['Debe cambiar clave']==='Si',activo:row['Activo']!=='No',perms:{},id:row['ID']?+row['ID']:Date.now()+Math.random()};});
+      // From Operacional
+      if(rO.visitas&&rO.visitas.length) newDb.visitas=rO.visitas.map(function(row){return{nombre:row['Nombre']||'',idNum:row['Numero ID']||row['RUT']||'',rut:row['RUT']||'',dpto:row['Depto']||'',autoriza:row['Autoriza']||'',fechaHora:row['Fecha y Hora']||'',guardia:row['Guardia']||'',obs:row['Observaciones']||'',observaciones:[],usada:false,id:Date.now()+Math.random()};});
+      if(rO.encomiendas&&rO.encomiendas.length) newDb.encomiendas=rO.encomiendas.map(function(row){return{nomDest:row['Destinatario']||'',rutDest:row['ID Dest']||'',dptoDest:row['Depto']||'',nombreRep:row['Repartidor']||'',empresa:row['Empresa']||'',obs:row['Obs Recepcion']||'',fechaHora:row['Fecha Recepcion']||'',guardia:row['Recibio']||'',entregada:row['Entregada']==='Si',nomRetiro:row['Quien Retiro']||'',idRetiro:row['ID Retiro']||'',fechaEntrega:row['Fecha Entrega']||'',obsEntrega:row['Obs Entrega']||'',pinHash:null,id:Date.now()+Math.random()};});
+      if(rO.bitacora&&rO.bitacora.length) newDb.bitacora=rO.bitacora.map(function(row){return{dpto:row['Depto']||'',tipo:row['Tipo']||'',descripcion:row['Descripcion']||row['Descripción']||'',prioridad:row['Prioridad']||'normal',estado:row['Estado']||'abierto',fechaHora:row['Fecha y Hora']||'',guardia:row['Guardia']||'',observaciones:[],id:Date.now()+Math.random()};});
+      if(rO.visitantes&&rO.visitantes.length) newDb.visitantes=rO.visitantes.map(function(row){return{nombre:row['Nombre']||'',idTipo:row['Tipo ID']||'rut',idNum:row['Numero ID']||''};});
+      // Save
+      var existIdx=condos.findIndex(function(cc){return cc.condominio.rut===cond.rut;});
+      if(existIdx>=0){condos[existIdx].condominio=cond;condos[existIdx].db=newDb;activeCondo=existIdx;}
+      else{condos.push({condominio:cond,db:newDb});activeCondo=condos.length-1;}
+      db=newDb; saveCondos();
+      statusEl.textContent='Configuracion completada.';
+      var resCount=newDb.residentes.length, usrCount=newDb.usuarios.length;
+      setTimeout(function(){
+        $i('setup-screen').classList.add('hidden');
+        showLogin();
+        setTimeout(function(){alert('Condominio "'+cond.nombre+'" configurado.\nResidentes: '+resCount+'\nUsuarios: '+usrCount+'\nVisitas: '+newDb.visitas.length+'\nEncomiendas: '+newDb.encomiendas.length);},500);
+      },800);
+    } else {
+      throw new Error('Script Maestro no retorno datos de condominio.');
+    }
+  } catch(err2){
+    statusEl.classList.add('hidden');
+    showAlert('setup-err','Error: '+err2.message,'a-err');
+    btn.disabled=false; btn.textContent='Configurar desde Scripts';
   }
 }
+
+// Helper — call any URL directly (used during setup before db is configured)
+async function callScriptUrl(url, action, payload){
+  var fetchUrl=url+'?action='+encodeURIComponent(action);
+  if(payload){var enc=encodeURIComponent(JSON.stringify(payload));if(enc.length<6000)fetchUrl+='&data='+enc;}
+  var res=await fetch(fetchUrl,{method:'GET'});
+  if(!res.ok) throw new Error('HTTP '+res.status);
+  var text=await res.text();
+  return JSON.parse(text);
+}
+
+// Manual setup fallback (shows alert explaining how to use scripts)
+function mostrarSetupManual(){
+  alert('Para configurar manualmente, primero crea los Google Sheets con los datos del condominio usando las plantillas del Script Maestro y Script Operacional, luego vuelve a esta pantalla con las URLs.');
+}
+
+function finishSetup(){configurarDesdeScripts();}
 async function autoInitialPull(){
   addSyncLog('Descargando datos iniciales desde Sheets...');
   try{
@@ -904,14 +853,17 @@ async function autoInitialPull(){
 // ================================================================
 function showLogin(){
   $i('login-screen').classList.remove('hidden');
+  $i('condo-selector').classList.add('hidden');
+  $i('setup-screen').classList.add('hidden');
   $i('main-app').classList.add('hidden');
   cu=null;
-  $i('l-rut').value='';$i('l-clave').value='';
-  $i('forzar-cambio').classList.add('hidden');
-  $i('login-btn').textContent='Ingresar';
-  if(activeCondo!==null&&condos[activeCondo]){
-    $i('login-condo-name').textContent=condos[activeCondo].condominio.nombre;
-  }
+  if($i('l-rut'))$i('l-rut').value='';
+  if($i('l-clave'))$i('l-clave').value='';
+  if($i('forzar-cambio'))$i('forzar-cambio').classList.add('hidden');
+  if($i('login-btn'))$i('login-btn').textContent='Ingresar';
+  // Show condo name in login header
+  var nombre=activeCondo!==null&&condos[activeCondo]?condos[activeCondo].condominio.nombre:'';
+  if($i('login-condo-name'))$i('login-condo-name').textContent=nombre;
 }
 function doLogin(){
   const rut=v('l-rut'),clave=v('l-clave');
@@ -936,7 +888,7 @@ function doLogin(){
   cu={rut,nombre:user.nombre,rol:user.rol,uid:user.id};
   enterApp();
 }
-function doLogout(){cu=null;$i('login-screen').classList.remove('hidden');$i('main-app').classList.add('hidden');}
+function doLogout(){cu=null;$i('main-app').classList.add('hidden');showLogin();}
 function enterApp(){
   $i('login-screen').classList.add('hidden');$i('main-app').classList.remove('hidden');
   $i('hdr-cond').textContent=condos[activeCondo]?.condominio?.nombre||'—';
@@ -950,7 +902,9 @@ function enterApp(){
     if(u){const t=db.turnos.find(x=>x.usuarioId===u.id&&x.fecha===hoy);if(t){db.turnoActivoId=t.id;saveDB();}}
   }
   if(db.admin){$i('adm-email').value=db.admin.email||'';}
-  if(db.syncUrl){$i('s-url').value=db.syncUrl;setSyncDot('ok');$i('s-status-txt').textContent='Configurado';if(db.lastSync)$i('s-last-sync').textContent='Sync: '+db.lastSync;iniciarAutoSync();}
+  if($i('s-url-maestro-adm')&&db.syncUrlMaestro)$i('s-url-maestro-adm').value=db.syncUrlMaestro;
+  if($i('s-url-operacional-adm')&&db.syncUrlOperacional)$i('s-url-operacional-adm').value=db.syncUrlOperacional;
+  if(db.syncUrlMaestro||db.syncUrlOperacional){$i('s-url').value=db.syncUrl;setSyncDot('ok');$i('s-status-txt').textContent='Configurado';if(db.lastSync)$i('s-last-sync').textContent='Sync: '+db.lastSync;iniciarAutoSync();}
   const si=$i('s-interval');if(si&&db.syncInterval)si.value=db.syncInterval;
   const gk=localStorage.getItem(ACCESS_KEY_STORAGE)||DEFAULT_GATE_KEY;
   if($i('adm-gate-key'))$i('adm-gate-key').value=gk;
@@ -965,7 +919,7 @@ function enterApp(){
     else if(rolActual==='admin'){rolBanner.textContent='Modo Administrador: registros del guardia actualizados al iniciar sesion.';rolBanner.classList.remove('hidden');setTimeout(function(){rolBanner.classList.add('hidden');},6000);}
   }
   // Al entrar: sync segun rol
-  if(db.syncUrl){
+  if(db.syncUrlMaestro||db.syncUrlOperacional||db.syncUrl){
     var rolEntrar=cu?cu.rol:'guardia';
     if(rolEntrar==='guardia'){
       // Guardia: baja residentes frescos, luego sube sus registros
@@ -1083,31 +1037,43 @@ function addSyncLog(msg,type='info'){
 function setSyncDot(state){
   [$i('s-dot'),$i('sync-dot')].forEach(d=>{if(!d)return;d.className=d.className.replace(/\b(ok|busy|err)\b/g,'').trim()+' '+state;});
 }
-async function callScript(body){
-  const url=db.syncUrl||v('s-url');if(!url)throw new Error('URL no configurada');
-  const action=body.action||'ping';
-  let fetchUrl=`${url}?action=${encodeURIComponent(action)}`;
+async // scriptType: 'maestro' | 'operacional' | auto (default)
+async function callScript(body, scriptType){
+  var tipo = scriptType || 'auto';
+  var url = '';
+  if(tipo==='maestro') url = db.syncUrlMaestro||db.syncUrl||'';
+  else if(tipo==='operacional') url = db.syncUrlOperacional||db.syncUrl||'';
+  else {
+    // auto: route by action
+    var action = body.action||'';
+    var maestroActions = ['pullMaestro'];
+    var isMaestroPayload = body.payload && (body.payload.residentes||body.payload.usuarios||body.payload.turnos||body.payload.condominio);
+    url = isMaestroPayload ? (db.syncUrlMaestro||db.syncUrl||'') : (db.syncUrlOperacional||db.syncUrlMaestro||db.syncUrl||'');
+  }
+  if(!url) throw new Error('URL de script no configurada');
+  var action = body.action||'ping';
+  var fetchUrl = url+'?action='+encodeURIComponent(action);
   if(body.payload){
-    const dataStr=JSON.stringify(body.payload);
-    const encoded=encodeURIComponent(dataStr);
-    if(encoded.length<6000){fetchUrl+='&data='+encoded;}
-    else{
-      // Large payload: split into chunks via multiple calls
-      const parts={residentes:body.payload.residentes,visitas:body.payload.visitas};
-      const parts2={encomiendas:body.payload.encomiendas,bitacora:body.payload.bitacora};
-      const parts3={usuarios:body.payload.usuarios,turnos:body.payload.turnos,config:body.payload.config};
-      for(const p of [parts,parts2,parts3]){
-        const u=`${url}?action=pushAll&data=${encodeURIComponent(JSON.stringify(p))}`;
-        const r=await fetch(u);if(!r.ok)throw new Error('HTTP '+r.status);
+    var encoded = encodeURIComponent(JSON.stringify(body.payload));
+    if(encoded.length < 6000){
+      fetchUrl += '&data='+encoded;
+    } else {
+      // Split large payload into chunks
+      var chunks = [{residentes:body.payload.residentes,usuarios:body.payload.usuarios,turnos:body.payload.turnos},
+                    {visitas:body.payload.visitas,encomiendas:body.payload.encomiendas},
+                    {bitacora:body.payload.bitacora,visitantes:body.payload.visitantes}];
+      for(var i=0;i<chunks.length;i++){
+        var u=url+'?action=pushAll&data='+encodeURIComponent(JSON.stringify(chunks[i]));
+        var rr=await fetch(u); if(!rr.ok) throw new Error('HTTP '+rr.status);
       }
-      return{ok:true,msg:'Datos enviados en partes',results:{}};
+      return {ok:true,msg:'Datos enviados en partes',results:{}};
     }
   }
-  const res=await fetch(fetchUrl,{method:'GET'});
-  if(!res.ok)throw new Error(`HTTP ${res.status}. Verifica que el script esté publicado como "Cualquier persona".`);
-  const text=await res.text();
-  let data;try{data=JSON.parse(text);}catch(e){throw new Error('Respuesta inválida. Verifica la URL del script.');}
-  if(!data.ok)throw new Error(data.error||'Error en script');
+  var res = await fetch(fetchUrl,{method:'GET'});
+  if(!res.ok) throw new Error('HTTP '+res.status+'. Verifica que el script este publicado como Cualquier persona.');
+  var text = await res.text();
+  var data; try{data=JSON.parse(text);}catch(e){throw new Error('Respuesta invalida del script.');}
+  if(!data.ok) throw new Error(data.error||'Error en script');
   return data;
 }
 async function verificarConexion(){
@@ -1119,23 +1085,27 @@ async function verificarConexion(){
     $i('s-status-txt').textContent='Conectado';iniciarAutoSync();
   }catch(e){setSyncDot('err');addSyncLog('✗ '+e.message,'err');showAlert('sync-alert','Error: '+e.message,'a-err');$i('s-status-txt').textContent='Error';}
 }
-function buildPushPayload(rol){
-  // Guardia: solo sube visitas, encomiendas y bitacora
-  // Admin/supervisor: sube todo
-  var esGuardia=(rol||cu?.rol||'guardia')==='guardia';
-  if(esGuardia){
-    return{
-      visitas:db.visitas,
-      encomiendas:db.encomiendas,
-      bitacora:db.bitacora,
-      config:{condNombre:condos[activeCondo]?.condominio?.nombre||'',lastPush:nowDT()}
-    };
-  }
-  return{
-    residentes:db.residentes,visitas:db.visitas,encomiendas:db.encomiendas,
-    bitacora:db.bitacora,usuarios:db.usuarios,turnos:db.turnos,
-    config:{condNombre:condos[activeCondo]?.condominio?.nombre||'',condRut:condos[activeCondo]?.condominio?.rut||'',adminEmail:db.admin?.email||'',lastPush:nowDT()}
+function buildPayloadMaestro(){
+  return {
+    residentes: db.residentes,
+    usuarios:   db.usuarios,
+    turnos:     db.turnos,
+    condominio: condos[activeCondo]?condos[activeCondo].condominio:{}
   };
+}
+function buildPayloadOperacional(){
+  return {
+    visitas:     db.visitas,
+    encomiendas: db.encomiendas,
+    bitacora:    db.bitacora,
+    visitantes:  db.visitantes||[]
+  };
+}
+// Kept for compatibility
+function buildPushPayload(rol){
+  var esGuardia=(rol||cu?.rol||'guardia')==='guardia';
+  if(esGuardia) return buildPayloadOperacional();
+  return Object.assign({},buildPayloadMaestro(),buildPayloadOperacional());
 }
 async function syncPush(){
   if(!db.syncUrl){showAlert('sync-alert','Configura la URL primero','a-war');return;}
@@ -1148,20 +1118,30 @@ async function syncPush(){
   }catch(e){setSyncDot('err');addSyncLog('✗ '+e.message,'err');showAlert('sync-alert','Error: '+e.message,'a-err');}
 }
 async function syncPushSilent(){
-  if(!db?.syncUrl)return;
-  const rol=cu?.rol||'guardia';
-  // Guardia: solo sube si hay registros propios
-  if(rol==='guardia'){
-    const hasData=db.visitas.length||db.encomiendas.length||db.bitacora.length;
-    if(!hasData)return;
-  } else {
-    const hasData=db.residentes.length||db.visitas.length||db.encomiendas.length||db.bitacora.length||db.usuarios.length;
-    if(!hasData)return;
-  }
+  var urlM=db.syncUrlMaestro||db.syncUrl||'';
+  var urlO=db.syncUrlOperacional||db.syncUrl||'';
+  if(!urlM&&!urlO) return;
+  var rol=cu?cu.rol:'guardia';
   try{
-    callScript({action:'pushAll',payload:buildPushPayload(rol)})
-      .then(()=>{db.lastSync=nowDT();saveDB();setSyncDot('ok');})
-      .catch(()=>setSyncDot('err'));
+    if(rol==='guardia'){
+      // Guardia: solo sube operacional
+      if(!urlO) return;
+      if(!(db.visitas.length||db.encomiendas.length||db.bitacora.length)) return;
+      callScript({action:'pushAll',payload:buildPayloadOperacional()},'operacional')
+        .then(function(){db.lastSync=nowDT();saveDB();setSyncDot('ok');})
+        .catch(function(){setSyncDot('err');});
+    } else {
+      // Admin: sube maestro Y operacional
+      if(urlM&&db.residentes.length){
+        callScript({action:'pushAll',payload:buildPayloadMaestro()},'maestro')
+          .then(function(){setSyncDot('ok');}).catch(function(){});
+      }
+      if(urlO&&(db.visitas.length||db.encomiendas.length)){
+        callScript({action:'pushAll',payload:buildPayloadOperacional()},'operacional')
+          .then(function(){db.lastSync=nowDT();saveDB();setSyncDot('ok');})
+          .catch(function(){setSyncDot('err');});
+      }
+    }
   }catch(e){setSyncDot('err');}
 }
 function syncPull(){openModal('modal-confirm-pull');}
@@ -2010,15 +1990,17 @@ function registrarVisMultiple(){
 // ================================================================
 // INIT
 // ================================================================
-// Check URL key param
-const urlParams=new URLSearchParams(window.location.search);
-const urlKey=urlParams.get('key');
-if(urlKey){
-  const stored=localStorage.getItem(ACCESS_KEY_STORAGE)||DEFAULT_GATE_KEY;
-  if(urlKey===stored){$i('key-gate').classList.add('hidden');loadCondos();mostrarSelector();}
-  // else show gate
+loadCondos();
+if(condos.length>0){
+  // Condominio ya configurado — ir directo al login
+  activeCondo=0;
+  db=condos[0].db||emptyDB();
+  condos[0].db=db;
+  showLogin();
+} else {
+  // Sin condominio — mostrar setup inicial
+  mostrarSetupInicial();
 }
-// else show gate normally
 </script>
 </body>
 </html>
